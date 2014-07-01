@@ -27,7 +27,7 @@ module.exports = function (grunt) {
     watch: {
       js:{
         files: ['lib/**/*.js','test/**/*.js'],
-        tasks: ['karma:liveunit:run']
+        tasks: ['karma:liveunit:run','build']
       }
     },
     // Test settings
