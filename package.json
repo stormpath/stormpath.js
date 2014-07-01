@@ -1,0 +1,14 @@
+{
+  "name": "stormpath-js",
+  "version": "0.0.0",
+  "description": "A browser-ready javascript library for Stormpath.  Use this library if you are building your own ID Site from scratch. Additional features may be added in the future.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "browserify": "^4.2.0"
+  }
+}
