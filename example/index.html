@@ -5,6 +5,39 @@
   <script type="text/javascript">
     var client = new Stormpath.Client(function(err,idSiteModel) {
       console.log(err,idSiteModel);
+
+      client.login(
+        {
+          login:'robert+1@stormpath.com',
+          password:'not correct'
+        },
+        function(err,res){
+          // should be 400 bad login
+          console.log(err,res);
+          client.login(
+            {
+              login:'robert+1@stormpath.com',
+              password:'correct'
+            },
+            function(err,res){
+              // should be OK
+              console.log(err,res);
+              client.login(
+                {
+                  login:'robert+1@stormpath.com',
+                  password:'correct'
+                },function(err,res){
+                  // should tell me that the executor has been terminated
+                  console.log(err,res);
+                }
+              )
+            }
+          )
+        }
+      )
+
+
+
     });
   </script>
 </head>
