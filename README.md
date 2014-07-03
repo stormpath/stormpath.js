@@ -203,36 +203,38 @@ client.sendPasswordResetEmail(email,function(err,result){
 
 If the user has clicked on the password reset link that we sent them,
 the `client` will automatically fetch the password reset token from the URL.
-You should then call `verifyPasswordResetToken` to initiate the call to
-Stormpath which will verify the integrity of the token:
+You should then call `verifyPasswordResetToken` to verify the token with Stormpath's API:
 
 ````javascript
-client.verifyPasswordToken(function(err,account){
+client.verifyPasswordToken(function(err,pwTokenVerification){
   if(err){
     // token is invalid, expired, or already used.
     // show err.userMessage to user
   }else{
     // prompt the user for a new password, then
-    // save it to the account
+    // call setNewPassword
   }
 })
 ````
 
 ### Set a new password
 
-After verifying the password reset token, collect a new password
-from the user, set it on the `account` that was returned during verification,
-then call `save()` on the account:
+After verifying the password reset token and receiving a `pwTokenVerification`,
+collect a new password and pass it with the verification to `setNewPassword`.
+
+**NOTE**: You may only make one setPassword request per session.  You must
+use client-side validation to parse the `passwordPolicy` and proactively
+warn the user that their password is not correct, before you invoke this
+method
+
 
 ````javascript
 
-account.password = "hackerZtheplanet!!"
-account.save(function(err){
+client.setNewPassword(pwTokenVerification,newPassword,function(err,result){
   if(err){
-    // password strength rules were not met,
-    // show err.userMessage to the user
+    // password strength rules were not met
   }else{
     // success, now prompt the user to login
   }
-})
+});
 ````
