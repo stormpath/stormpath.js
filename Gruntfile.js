@@ -23,11 +23,18 @@ module.exports = function (grunt) {
         }
       }
     },
-
+    clean: ['./.tmp'],
+    instrument: {
+      files: 'lib/**/*.js',
+      options: {
+        lazy: true,
+        basePath: '.tmp/instrumented/'
+      }
+    },
     watch: {
       js:{
-        files: ['lib/**/*.js','test/**/*.js'],
-        tasks: ['karma:liveunit:run','build']
+        files: ['lib/**/*.js','test/spec/**/*.js'],
+        tasks: ['clean','instrument','karma:liveunit:run']
       }
     },
     // Test settings

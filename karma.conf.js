@@ -47,10 +47,10 @@ module.exports = function(config) {
 
 
     preprocessors: {
-      'test/**/*.js': ['browserify']
+      'test/spec/*.js': ['browserify']
     },
 
-    reporters: ['progress'],
+    reporters: ['progress','coverage'],
 
 
     // Continuous Integration mode
