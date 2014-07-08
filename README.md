@@ -1,66 +1,58 @@
 # Stormpath.js
 
-A browser-ready javascript library for Stormpath.  Use this library if you are building your own ID Site from scratch.
+A browser-ready javascript library for use with Stormpath features.  Use this library if you are building your own ID Site from scratch.
 Additional features may be added in the future.
+
+
+### Usage
+
+In order to use Stormpath.js, your application must be part of a Service-Provider initiated flow.
+The client assumes this is true and searches the browser's URL for the secure token
+which is needed to initialize the client.
+
+For more information please read [Using Stormpath's ID Site to Host your User Management UI](http://docs.stormpath.com/guides/using-id-site)
 
 ### Installation
 
-You may load this library from our CDN, by including this URL on your page:
+We recommend that you load this library from our CDN, by including this script tag on your page:
 
 ````html
 <script type="text/javascript" src="http://cdn.stormpath.com/stormpath-js/0.0.1/stormpath.min.js"></script>
 ````
 
-You may also use bower:
+This library is also available as a bower package:
 
 ````bash
 bower install stormpath-js
 ````
 
-You can also clone this repo, and copy the `stormpath.min.js` or `stormpath.js` to your project environment.
-
+You may also clone this repo and use the `stormpath.min.js` or `stormpath.js` files from the `dist/` folder.
 
 ### Initialization
 
-To initialize a stormpath Client which will be used for all API communication, simply create a new instance and pass a callback function:
+To initialize a Stormpath Client which will be used for all API communication, simply create a new instance and pass a callback function:
 
 ````javascript
 $(document).ready(function(){
   var client = new Stormpath.Client(function readyCallback(err,idSiteModel){
-    // see below
+    if(err){
+      // The secure token is missing or not valid, show err.message to the user
+    }else{
+      // The client is ready, and you can now use it's methods
+      // to build your ID site, per the idSiteModel
+    }
   });
 })
-````
-
-In order to use Stormpath.js, your application must be part of a Service-Provider initiated flow.
-The client assumes this is true, and searches the browser's URL for the appropriate secure token
-which is needed to initialize the client (currently implemented as a JWT)
-
-### On ready callback
-
-After the client has finished initializing, it will call your `readyCallback`.
-
-````javascript
-
-function readyCallback(err,idSiteModel){
-  if(err){
-    // The JWT is not valid, show err.userMessage to the user
-  }else{
-    // The client is ready, and you can now use it's methods
-    // to build your ID site, per the idSiteModel
-  }
-
-}
 ````
 
 ### ID Site model
 
 The site model has all the information that you need to build your ID Site, it tells you:
 
-* The password strength policies, `passwordPolicy`.
-If the passwordPolicy is null, it means that new accounts are not permitted for the target account store.
-* The social providers that are configured, `providers`.  This in array, and the ordering is controlled by account store prioritization.
-* The URL to the logo image
+* `passwordPolicy`, an object, which provides the password strength policies for the account store which new accounts will be created in.
+If null, new accounts are not permitted for the target account store or the store is a social provider store.
+* `providers`, which provides your social provider configuration as an array of objects, ordered by account store prioritization.
+* `logoUrl`, the URL to the logo image
 
 All of these options can be configured in your Stormpath Admin Console.
 
@@ -78,8 +70,6 @@ Example site model:
       "providerId": "google",
       "clientId": "489886489864-bm1m1kd1dbdo1kd1h4phhr6aohhr6933.apps.googleusercontent.com"
     },
-
-
   ],
   "passwordPolicy": {
     "minLength": 8,
@@ -107,17 +97,16 @@ client.login(
   },
   function loginCallback(err,result){
     if(err){
-      // credentials are invalid, show err.userMessage to the user
-    }
-    else{
+      // credentials are invalid, show err.message to the user
+    }else{
       // login was successful, send the user to the redirectUri
-      document.location = result.redirectUri;
+      window.location.replace(result.redirectUri);
     }
   }
 );
 ````
 
-### Login a user (Google or Facebook)
+### Login/register a user (Google or Facebook)
 
 Use the Facebook or Google Javascript Library to prompt the user for login, then pass
 the token they provide to the `login` method using the `providerData` object:
@@ -132,17 +121,16 @@ client.login(
   },
   function loginCallback(err,result){
     if(err){
-      // credentials are invalid, show err.userMessage to the user
-    }
-    else{
+      // an error with the provider, show err.message to the user
+    }else{
       // login was successful, send the user to the redirectUri
-      document.location = result.redirectUri;
+      window.location.replace(result.redirectUri);
     }
   }
 );
 ````
 
-### Register a new user
+### Register a new user (username & password)
 
 If the target account store will allow new accounts, you can collect the necessary information
 from the user and supply it to the `register` method:
@@ -159,8 +147,10 @@ client.register(
     if(result.verified){
       // email verification workflow is NOT enabled for this account store,
       // send the user to result.redirectUri
+      window.location.replace(result.redirectUri);
     }else if(result.created){
       // tell the user to check their email for a verification link
+      alert('Please check your email for a verification link.')
     }
   }
 )
@@ -169,16 +159,15 @@ client.register(
 ### Verify a new account
 
 If your account store requires email verification for new accounts we will
-send the user an email with a link.  When they click on this link they will
-arrive at your application with a token in the URL.  The `client` will
-automatically fetch this token from the URL.  You should then call
-`verifyEmailToken`, which will verify the integrity of this token:
+send the user an email with a verification link.  When they click on this link they will
+arrive at your application with a special token in the URL.  You should then call
+`verifyEmailToken` to verify the token with Stormpath:
 
 ````javascript
 client.verifyEmailToken(function(err,account){
   if(err){
     // token is invalid, expired, or already used.
-    // show err.userMessage to user
+    // show err.message to user
   }else{
     // token is valid, now prompt the user to login
   }
@@ -187,12 +176,12 @@ client.verifyEmailToken(function(err,account){
 
 ### Send a password reset email
 
-Collect the user's username/email, then call `sendPasswordResetEmail`:
+Collect the user's username or email, then call `sendPasswordResetEmail`:
 
 ````javascript
 client.sendPasswordResetEmail(email,function(err,result){
   if(err){
-    // email is invalid, show err.userMessage to user
+    // email is invalid, show err.message to user
   }else{
     // tell user to check their email for a link
   }
@@ -201,15 +190,15 @@ client.sendPasswordResetEmail(email,function(err,result){
 
 ### Verify a password reset token
 
-If the user has clicked on the password reset link that we sent them,
-the `client` will automatically fetch the password reset token from the URL.
-You should then call `verifyPasswordResetToken` to verify the token with Stormpath's API:
+If the user has clicked on the password reset link that we sent them, they will
+arrive ay your application with a special token in the URL.
+You should then call `verifyPasswordResetToken` to verify the token with Stormpath:
 
 ````javascript
 client.verifyPasswordToken(function(err,pwTokenVerification){
   if(err){
     // token is invalid, expired, or already used.
-    // show err.userMessage to user
+    // show err.message to user
   }else{
     // prompt the user for a new password, then
     // call setNewPassword
@@ -220,12 +209,12 @@ client.verifyPasswordToken(function(err,pwTokenVerification){
 ### Set a new password
 
 After verifying the password reset token and receiving a `pwTokenVerification`,
-collect a new password and pass it with the verification to `setNewPassword`.
+collect a new password from the user and pass it with the verification
+to `setNewPassword`.
 
-**NOTE**: You may only make one setPassword request per session.  You must
-use client-side validation to parse the `passwordPolicy` and proactively
-warn the user that their password is not correct, before you invoke this
-method
+**NOTE**: Only one call per session is allowed for this method.  You ***must***
+use client-side verification to proactively warn the user that their password will not match
+the password policy rules that are defined in the `idSiteModel` (see above).
 
 
 ````javascript
