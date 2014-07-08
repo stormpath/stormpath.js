@@ -5,6 +5,24 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
+    concat: {
+      options: {
+        banner: '/*\n' +
+          ' Stormpath.js v<%= pkg.version %>\n' +
+          ' (c) 2014 Stormpath, Inc. http://stormpath.com\n'+
+          ' License: Apache 2.0\n' +
+          '*/\n'
+      },
+      min: {
+        src: ['.tmp/stormpath.js'],
+        dest: 'dist/stormpath.js',
+      },
+      js: {
+        src: ['.tmp/stormpath.min.js'],
+        dest: 'dist/stormpath.min.js',
+      }
+    },
     connect: {
       fakeapi: {
         options: {
@@ -16,7 +34,7 @@ module.exports = function (grunt) {
     browserify: {
       dist: {
         src: ['./lib/index.js'],
-        dest: 'dist/stormpath.js',
+        dest: '.tmp/stormpath.js',
         options: {
           bundleOptions: {
             standalone: 'Stormpath'
@@ -27,7 +45,7 @@ module.exports = function (grunt) {
     uglify: {
       dist: {
         files: {
-          'dist/stormpath.min.js': ['dist/stormpath.js']
+          '.tmp/stormpath.min.js': ['.tmp/stormpath.js']
         }
       }
     },
@@ -65,6 +83,10 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['browserify']);
 
   grunt.registerTask('build', ['browserify:dist','uglify:dist']);
+
+  grunt.registerTask('version', ['concat:min','concat:js']);
+
+  grunt.registerTask('release', ['build','version']);
 
   grunt.registerTask('dev', ['karma:liveunit','connect:fakeapi','watch']);
 
