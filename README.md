@@ -1,3 +1,5 @@
+# WORK IN PROGRESS - DO NOT USE
+
 # Stormpath.js
 
 A browser-ready javascript library for use with Stormpath features.  Use this library if you are building your own ID Site from scratch.
