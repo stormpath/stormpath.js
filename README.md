@@ -8,7 +8,7 @@ Additional features may be added in the future.
 You may load this library from our CDN, by including this URL on your page:
 
 ````html
-<script type="text/javascript" src="http://cdn.stormpath.com/stormpath.min.js"></script>
+<script type="text/javascript" src="http://cdn.stormpath.com/stormpath-js/0.0.1/stormpath.min.js"></script>
 ````
 
 You may also use bower:
