@@ -32,9 +32,13 @@ module.exports = function (grunt) {
       }
     },
     watch: {
-      js:{
-        files: ['lib/**/*.js','test/spec/**/*.js'],
-        tasks: ['clean','instrument','karma:liveunit:run']
+      src:{
+        files: ['lib/**/*.js'],
+        tasks: ['clean','instrument','karma:liveunit:run','build']
+      },
+      unitTest:{
+        files: ['test/spec/**/*.js'],
+        tasks: ['karma:liveunit:run']
       }
     },
     // Test settings

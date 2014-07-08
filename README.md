@@ -99,8 +99,8 @@ client.login(
     if(err){
       // credentials are invalid, show err.message to the user
     }else{
-      // login was successful, send the user to the redirectUri
-      window.location.replace(result.redirectUri);
+      // login was successful, send the user to the redirectUrl
+      window.location.replace(result.redirectUrl);
     }
   }
 );
@@ -123,8 +123,8 @@ client.login(
     if(err){
       // an error with the provider, show err.message to the user
     }else{
-      // login was successful, send the user to the redirectUri
-      window.location.replace(result.redirectUri);
+      // login was successful, send the user to the redirectUrl
+      window.location.replace(result.redirectUrl);
     }
   }
 );
@@ -144,13 +144,14 @@ client.register(
     password: 'hackerztheplanet'
   },
   function registerCallback(err,result){
-    if(result.verified){
-      // email verification workflow is NOT enabled for this account store,
-      // send the user to result.redirectUri
-      window.location.replace(result.redirectUri);
-    }else if(result.created){
+    if(result.redirectUrl){
+      // You will be given the redirectUrl if the email verification workflow is
+      // NOT enabled for this account store, in which case the user can now
+      // continue to the redirectUrl
+      window.location.replace(result.redirectUrl);
+    }else{
       // tell the user to check their email for a verification link
-      alert('Please check your email for a verification link.')
+      alert('Please check your email for a verification link.');
     }
   }
 )
