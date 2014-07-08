@@ -25,7 +25,8 @@
     "karma-chai": "^0.1.0",
     "karma-coverage": "^0.2.4",
     "grunt-istanbul": "^0.3.0",
-    "grunt-contrib-clean": "^0.5.0"
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-connect": "^0.8.0"
   },
   "dependencies": {
     "Base64": "^0.3.0"

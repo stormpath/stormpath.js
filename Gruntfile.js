@@ -5,6 +5,14 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
+    connect: {
+      fakeapi: {
+        options: {
+          middleware: require('./test/fakeapi'),
+          port: 8085
+        },
+      },
+    },
     browserify: {
       dist: {
         src: ['./lib/index.js'],
@@ -37,7 +45,7 @@ module.exports = function (grunt) {
         tasks: ['clean','instrument','karma:liveunit:run','build']
       },
       unitTest:{
-        files: ['test/spec/**/*.js'],
+        files: ['test/**/*.js'],
         tasks: ['karma:liveunit:run']
       }
     },
@@ -58,6 +66,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', ['browserify:dist','uglify:dist']);
 
-  grunt.registerTask('dev', ['karma:liveunit','watch']);
+  grunt.registerTask('dev', ['karma:liveunit','connect:fakeapi','watch']);
 
 };

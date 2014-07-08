@@ -1,0 +1,39 @@
+{
+  "href": "http://localhost:8085/v1/applications/1234",
+  "name": "whatever",
+  "description": "",
+  "loginAttempts": {
+    "href": "http://localhost:8085/v1/applications/1234/loginAttempts"
+  },
+  "accounts": {
+    "href": "http://localhost:8085/v1/applications/1234/accounts"
+  },
+  "passwordResetTokens": {
+    "href": "http://localhost:8085/v1/applications/1234/passwordResetTokens"
+  },
+  "idSiteModel": {
+    "href": "http://localhost:8085/v1/applications/1234/idSiteModel",
+    "providers": [
+      {
+        "providerId": "facebook",
+        "clientId": "718315328319819"
+      },
+      {
+        "providerId": "google",
+        "clientId": "248986489820-bm1m1kd1dbdod1dbh4phhrphhrj95959.apps.googleusercontent.com"
+      }
+    ],
+    "passwordPolicy": {
+      "minLength": 8,
+      "maxLength": 20,
+      "requireLowerCase": true,
+      "requireUpperCase": true,
+      "requireNumeric": true,
+      "requireDiacritical": false,
+      "requireSymbol": false
+    },
+    "logoUrl": "images/logo.png"
+  }
+}
+
+

@@ -13,6 +13,7 @@ module.exports = function(config) {
     files: [
       // 'lib/**/*.js',
       // 'test/mock/**/*.js',
+      'test/it/**/*.js',
       'test/spec/**/*.js'
     ],
 
@@ -47,6 +48,7 @@ module.exports = function(config) {
 
 
     preprocessors: {
+      'test/it/*.js': ['browserify'],
       'test/spec/*.js': ['browserify']
     },
 

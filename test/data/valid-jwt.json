@@ -1,7 +1,7 @@
 {
-  "encoded": "eyJhbGciOiJIUzI1NiIsImN0eSI6IkpXVCJ9.eyJhcHBfaHJlZiI6Imh0dHBzOi8vYXBpLnN0b3JtcGF0aC5jb20vdjEvYXBwbGljYXRpb25zL2FwcDEyMzQiLCJzcF90b2tlbiI6InNwdG9rZW4xMjM0In0.X_Vtd0BYyxp-vwyvo3dRpzahcrItwGcI9nvHa4a4eVA",
+  "encoded": "eyJhbGciOiJIUzI1NiIsImN0eSI6IkpXVCJ9.eyJhcHBfaHJlZiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4NS92MS9hcHBsaWNhdGlvbnMvMTIzNCIsInNwX3Rva2VuIjoic3B0b2tlbjEyMzQifQ.CECIfB8VxwEQ91FzMo5yvfy4GchxW84XIxTJcTUmyVM",
   "decoded": {
-    "app_href": "https://api.stormpath.com/v1/applications/app1234",
+    "app_href": "http://localhost:8085/v1/applications/1234",
     "sp_token":"sptoken1234"
   }
 }
