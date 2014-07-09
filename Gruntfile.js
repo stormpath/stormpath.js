@@ -104,12 +104,14 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['browserify']);
 
-  grunt.registerTask('build', ['browserify:dist','uglify:dist']);
+  grunt.registerTask('test', ['connect:fakeapi','karma']);
+
+  grunt.registerTask('build', ['browserify:dist','uglify:dist','version']);
 
   grunt.registerTask('version', ['concat:js','concat:md']);
 
   grunt.registerTask('release', function (target){
-    grunt.task.run(['bump-only:'+(target||'patch'),'build','version','bump-commit']);
+    grunt.task.run(['bump-only:'+(target||'patch'),'build','bump-commit']);
   });
 
   grunt.registerTask('dev', ['karma:liveunit','connect:fakeapi','watch']);
