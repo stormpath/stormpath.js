@@ -100,6 +100,20 @@ module.exports = function (grunt) {
         background: true
       }
     },
+    prompt: {
+      release: {
+        options:{
+          questions:[
+            {
+              config: 'release.confirmed',
+              message: 'Ready for release? This will version the files and push them to master',
+              type: 'confirm',
+              default: false
+            }
+          ]
+        }
+      }
+    }
   });
 
   grunt.registerTask('default', ['browserify']);
@@ -111,7 +125,14 @@ module.exports = function (grunt) {
   grunt.registerTask('version', ['concat:js','concat:md']);
 
   grunt.registerTask('release', function (target){
-    grunt.task.run(['bump-only:'+(target||'patch'),'build','bump-commit']);
+    grunt.registerTask('_release', function (){
+      var t = grunt.config.get('release.confirmed');
+      if(!t){
+        grunt.fail.warn('You have aborted the release task.');
+      }
+      grunt.task.run(['bump-only:'+(target||'patch'),'build','bump-commit']);
+    });
+    grunt.task.run(['prompt:release','_release']);
   });
 
   grunt.registerTask('dev', ['karma:liveunit','connect:fakeapi','watch']);
