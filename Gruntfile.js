@@ -12,7 +12,7 @@ module.exports = function (grunt) {
         updateConfigs: ['pkg'],
         commit: true,
         commitMessage: 'Release v%VERSION%',
-        commitFiles: ['package.json','bower.json','dist/stormpath.js','dist/stormpath.min.js'],
+        commitFiles: ['package.json','bower.json','dist/stormpath.js','dist/stormpath.min.js','README.md'],
         createTag: true,
         tagName: '%VERSION%',
         tagMessage: 'Version %VERSION%',
@@ -21,20 +21,28 @@ module.exports = function (grunt) {
       }
     },
     concat: {
-      options: {
-        banner: '/*\n' +
-          ' Stormpath.js v<%= pkg.version %>\n' +
-          ' (c) 2014 Stormpath, Inc. http://stormpath.com\n'+
-          ' License: Apache 2.0\n' +
-          '*/\n'
+      js:{
+        options: {
+          banner: '/*\n' +
+            ' Stormpath.js v<%= pkg.version %>\n' +
+            ' (c) 2014 Stormpath, Inc. http://stormpath.com\n'+
+            ' License: Apache 2.0\n' +
+            '*/\n'
+        },
+        files: {
+          'dist/stormpath.js': ['.tmp/stormpath.js'],
+          'dist/stormpath.min.js': ['.tmp/stormpath.min.js']
+        }
       },
-      min: {
-        src: ['.tmp/stormpath.js'],
-        dest: 'dist/stormpath.js',
-      },
-      js: {
-        src: ['.tmp/stormpath.min.js'],
-        dest: 'dist/stormpath.min.js',
+      md:{
+        options:{
+          process: function(src) {
+            return src.replace(/[0-9]\.[0-9]\.[0-9]/g, grunt.config.get('pkg.version'));
+          },
+        },
+        files: {
+          'README.md': ['README.md'],
+        }
       }
     },
     connect: {
@@ -98,7 +106,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', ['browserify:dist','uglify:dist']);
 
-  grunt.registerTask('version', ['concat:min','concat:js']);
+  grunt.registerTask('version', ['concat:js','concat:md']);
 
   grunt.registerTask('release', function (target){
     grunt.task.run(['bump-only:'+(target||'patch'),'build','version','bump-commit']);
