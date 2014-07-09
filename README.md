@@ -25,7 +25,7 @@ We recommend that you load this library from our CDN, by including this script t
 This library is also available as a bower package:
 
 ````bash
-bower install stormpath-js
+bower install stormpath.js
 ````
 
 You may also clone this repo and use the `stormpath.min.js` or `stormpath.js` files from the `dist/` folder.
@@ -230,3 +230,9 @@ client.setNewPassword(pwTokenVerification,newPassword,function(err,result){
   }
 });
 ````
+
+# Contributing
+
+We regularly maintain our GitHub repostiory, and are quick about reviewing pull requests and accepting changes!
+
+Please see the [Contributing Readme](CONTRIBUTING.md) for detailed information on the development and contribution workflow.

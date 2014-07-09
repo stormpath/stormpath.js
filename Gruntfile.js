@@ -6,6 +6,20 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    bump: {
+      options:{
+        files: ['package.json','bower.json'],
+        updateConfigs: ['pkg'],
+        commit: true,
+        commitMessage: 'Release v%VERSION%',
+        commitFiles: ['package.json','bower.json','dist/stormpath.js','dist/stormpath.min.js'],
+        createTag: true,
+        tagName: '%VERSION%',
+        tagMessage: 'Version %VERSION%',
+        push: true,
+        pushTo: 'origin master'
+      }
+    },
     concat: {
       options: {
         banner: '/*\n' +
@@ -86,7 +100,9 @@ module.exports = function (grunt) {
 
   grunt.registerTask('version', ['concat:min','concat:js']);
 
-  grunt.registerTask('release', ['build','version']);
+  grunt.registerTask('release', function (target){
+    grunt.task.run(['bump-only:'+(target||'patch'),'build','version','bump-commit']);
+  });
 
   grunt.registerTask('dev', ['karma:liveunit','connect:fakeapi','watch']);
 
