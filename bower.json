@@ -1,0 +1,15 @@
+{
+  "name": "stormpath.js",
+  "description": "A browser-ready javascript library for Stormpath",
+  "version": "0.1.0",
+  "license": "Apache 2.0",
+  "main": "dist/stormpath.js",
+  "keywords": ["stormpath"],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stormpath/stormpath.js.git"
+  },
+  "ignore": [],
+  "dependencies": {},
+  "devDependencies": {}
+}
