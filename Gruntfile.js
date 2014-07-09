@@ -104,7 +104,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['browserify']);
 
-  grunt.registerTask('test', ['connect:fakeapi','karma']);
+  grunt.registerTask('test', ['instrument','connect:fakeapi','karma']);
 
   grunt.registerTask('build', ['browserify:dist','uglify:dist','version']);
 
