@@ -53,10 +53,10 @@ The release task will do the following tasks:
  * README.md
 * Commit those files with a version message
 * Tag the repo with the new version
-* Push this new commit and take to origin
+* Push this new commit and tag to origin/master
 
 Once you are POSITIVE that everything is ready for
-release you may run the grunt task:
+release you may run the release task:
 
 ````bash
 grunt release

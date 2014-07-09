@@ -14,7 +14,7 @@ function fakeApiHandler(req,res) {
   else if (req.url === '/v1/applications/1234?expand=idSiteModel'){
     res.setHeader('Access-Control-Expose-Headers','Authorization');
     res.setHeader('Content-Type','application/json');
-    res.setHeader('Authorization','Bearer 1234');
+    res.setHeader('Authorization','Bearer id-site-result-token');
     res.end(JSON.stringify(require('./data/idSiteResponse.json')));
   }else if (req.method==='POST'){
     (function(req){
@@ -32,7 +32,7 @@ function fakeApiHandler(req,res) {
           }else{
             res.statusCode = 400;
             res.setHeader('Access-Control-Expose-Headers','Authorization');
-            res.setHeader('Authorization','Bearer 1234');
+            res.setHeader('Authorization','Bearer bad-login-result-token');
             res.setHeader('Content-Type','application/json');
             res.end(JSON.stringify(require('./data/badLoginResponse.json')));
           }
