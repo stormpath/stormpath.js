@@ -19,7 +19,7 @@ For more information please read [Using Stormpath's ID Site to Host your User Ma
 We recommend that you load this library from our CDN, by including this script tag on your page:
 
 ````html
-<script type="text/javascript" src="http://cdn.stormpath.com/stormpath-js/0.0.1/stormpath.min.js"></script>
+<script type="text/javascript" src="http://cdn.stormpath.com/stormpath-js/0.1.0/stormpath.min.js"></script>
 ````
 
 This library is also available as a bower package:
