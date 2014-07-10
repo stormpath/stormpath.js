@@ -167,7 +167,7 @@ arrive at your application with a special token in the URL.  You should then cal
 `verifyEmailToken` to verify the token with Stormpath:
 
 ````javascript
-client.verifyEmailToken(function(err,account){
+client.verifyEmailToken(function(err){
   if(err){
     // token is invalid, expired, or already used.
     // show err.message to user
@@ -182,7 +182,7 @@ client.verifyEmailToken(function(err,account){
 Collect the user's username or email, then call `sendPasswordResetEmail`:
 
 ````javascript
-client.sendPasswordResetEmail(email,function(err,result){
+client.sendPasswordResetEmail(email,function(err){
   if(err){
     // email is invalid, show err.message to user
   }else{
