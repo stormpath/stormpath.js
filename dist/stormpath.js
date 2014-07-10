@@ -12,7 +12,7 @@ function Client(options,readyCallback){
   var opts = typeof options === 'object' ? options : {};
   var cb = typeof options === 'function' ? options : ( readyCallback || utils.noop);
   var self = this;
-  self.baseurl = "https://api.stormpath.com";
+
   self.jwt = opts.token || self._getToken();
   if(!self.jwt){
     return cb(new Error('jwt not found as url query parameter'));
@@ -21,6 +21,7 @@ function Client(options,readyCallback){
     self.jwtPayload = JSON.parse(base64.atob(self.jwt.split('.')[1]));
     self.appHref = self.jwtPayload.app_href;
     self.sptoken = self.jwtPayload.sp_token || null;
+    self.baseurl = self.appHref.match('^.+//([^\/]+)\/')[0];
   }catch(e){
     return cb(e);
   }
