@@ -90,29 +90,17 @@ describe('Client', function () {
     });
 
     describe('if called without credentials',function(){
-      var result;
-      before(function(done){
-        client.login(function(err){
-          result = [err];
-          done();
-        });
-      });
-      it('should err',function(){
-        assert.instanceOf(result[0],Error);
+      it('should throw',function(){
+        assert.throws(client.login);
       });
     });
+
     describe('if called with unsupported credentials',function(){
-      var result;
-      before(function(done){
-        client.login({'unsupported':true},function(err){
-          result = [err];
-          done();
-        });
-      });
-      it('should err',function(){
-        assert.instanceOf(result[0],Error);
+      it('should throw',function(){
+        assert.throws(function(){client.login({'unsupported':true});});
       });
     });
+
     describe('if called with providerData (social login)',function(){
       var result;
       var input = {
