@@ -82,7 +82,7 @@ module.exports = function (grunt) {
     watch: {
       src:{
         files: ['lib/**/*.js'],
-        tasks: ['clean','instrument','karma:liveunit:run','build']
+        tasks: ['clean','instrument','build','karma:liveunit:run']
       },
       unitTest:{
         files: ['test/**/*.js'],
