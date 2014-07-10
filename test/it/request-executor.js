@@ -8,7 +8,7 @@ describe('Request Executor', function () {
   describe('instantiation', function () {
     before(function(done){
       var client = new stormpathJs.Client(
-        { jwt: validToken.encoded },
+        { token: validToken.encoded },
         function(){
           secondToken = client.requestExecutor.authToken;
           done();
@@ -29,7 +29,7 @@ describe('Request Executor', function () {
     var client;
     before(function(done){
       client = new stormpathJs.Client(
-        { jwt: validToken.encoded },
+        { token: validToken.encoded },
         function(){
           client.login({login:'bad',password:'bad'},function(){
             done();
@@ -47,7 +47,7 @@ describe('Request Executor', function () {
     var client;
     before(function(done){
       client = new stormpathJs.Client(
-        { jwt: validToken.encoded },
+        { token: validToken.encoded },
         function(){
           client.login({login:'good',password:'good'},done);
         }

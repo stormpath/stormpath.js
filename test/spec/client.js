@@ -22,7 +22,7 @@ describe('Client', function () {
     describe('with an invalid JWT', function () {
       var result;
       before(function(done){
-        new stormpathJs.Client({jwt:'this is not a valid token'},function(err,res){
+        new stormpathJs.Client({token:'this is not a valid token'},function(err,res){
           result = [err,res];
           done();
         });
@@ -40,7 +40,7 @@ describe('Client', function () {
 
         client = new stormpathJs.Client(
           {
-            jwt:token.encoded,
+            token:token.encoded,
             requestExecutor: {
               execute: function(m,u,cb){
                 requestedAppHref = u;
@@ -72,7 +72,7 @@ describe('Client', function () {
     before(function(done){
       client = new stormpathJs.Client(
         {
-          jwt:token.encoded,
+          token:token.encoded,
           requestExecutor: {
             execute: function(m,u,o,cb){
               if(u.match(/idSiteModel/)){
@@ -154,7 +154,7 @@ describe('Client', function () {
     before(function(done){
       client = new stormpathJs.Client(
         {
-          jwt:token.encoded,
+          token:token.encoded,
           requestExecutor: {
             execute: function(m,u,o,cb){
               if(u.match(/idSiteModel/)){
@@ -201,7 +201,7 @@ describe('Client', function () {
     before(function(done){
       client = new stormpathJs.Client(
         {
-          jwt:token.encoded,
+          token:token.encoded,
           requestExecutor: {
             execute: function(m,u,cb){
               if(u.match(/idSiteModel/)){
@@ -247,7 +247,7 @@ describe('Client', function () {
     before(function(done){
       client = new stormpathJs.Client(
         {
-          jwt:token.encoded,
+          token:token.encoded,
           requestExecutor: {
             execute: function(m,u,cb){
               if(u.match(/idSiteModel/)){
@@ -294,7 +294,7 @@ describe('Client', function () {
     before(function(done){
       client = new stormpathJs.Client(
         {
-          jwt:token.encoded,
+          token:token.encoded,
           requestExecutor: {
             execute: function(m,u,o,cb){
               if(u.match(/idSiteModel/)){
@@ -359,7 +359,7 @@ describe('Client', function () {
     before(function(done){
       client = new stormpathJs.Client(
         {
-          jwt:token.encoded,
+          token:token.encoded,
           requestExecutor: {
             execute: function(m,u,o,cb){
               if(u.match(/idSiteModel/)){

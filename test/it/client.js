@@ -9,7 +9,7 @@ describe('Client', function () {
     var result;
     before(function(done){
       client = new stormpathJs.Client(
-        { jwt: validToken.encoded },
+        { token: validToken.encoded },
         function(err,idSiteModel){
           result = [err,idSiteModel];
           done();
@@ -65,7 +65,7 @@ describe('Client', function () {
 
       before(function(done){
         // need a new client because the last test will end the session
-        client = new stormpathJs.Client({ jwt: validToken.encoded },function(){
+        client = new stormpathJs.Client({ token: validToken.encoded },function(){
           client.register({email:'verification-disabled'},function(err,value){
             result = [err,value];
             done();
