@@ -210,7 +210,7 @@ client.verifyPasswordToken(function(err,pwTokenVerification){
     // show err.message to user
   }else{
     // prompt the user for a new password, then
-    // call setNewPassword
+    // call setAccountPassword
   }
 })
 ````
@@ -219,7 +219,7 @@ client.verifyPasswordToken(function(err,pwTokenVerification){
 
 After verifying the password reset token and receiving a `pwTokenVerification`,
 collect a new password from the user and pass it with the verification
-to `setNewPassword`.
+to `setAccountPassword`.
 
 **NOTE**: Only one call per session is allowed for this method.  You ***must***
 use client-side verification to proactively warn the user that their password will not match
@@ -228,7 +228,7 @@ the password policy rules that are defined in the `idSiteModel` (see above).
 
 ````javascript
 
-client.setNewPassword(pwTokenVerification,newPassword,function(err,result){
+client.setAccountPassword(pwTokenVerification,newPassword,function(err,result){
   if(err){
     // password strength rules were not met
   }else{

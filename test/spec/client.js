@@ -286,7 +286,7 @@ describe('Client', function () {
   });
 
 
-  describe('setNewPassword()', function () {
+  describe('setAccountPassword()', function () {
     var calledWith = [];
     var token = require('../data/valid-jwt.json');
     var client;
@@ -301,7 +301,7 @@ describe('Client', function () {
                 // the first call for the site model
                 done();
               }else{
-                // the calls to setNewPassword
+                // the calls to setAccountPassword
                 calledWith.push([m,u,o]);
                 cb();
               }
@@ -313,14 +313,14 @@ describe('Client', function () {
 
     describe('if called without a callback',function(){
       it('should throw',function(){
-        assert.throws(client.setNewPassword);
+        assert.throws(client.setAccountPassword);
       });
     });
 
     describe('if called with an invalid pwTokenVerification',function(){
       it('should throw',function(){
         assert.throws(function(){
-          client.setNewPassword({this:'is not valid'});
+          client.setAccountPassword({this:'is not valid'});
         });
       });
     });
@@ -328,7 +328,7 @@ describe('Client', function () {
     describe('if called without a new password',function(){
       it('should throw',function(){
         assert.throws(function(){
-          client.setNewPassword({href:'this is almost valid'});
+          client.setAccountPassword({href:'this is almost valid'});
         });
       });
     });
@@ -337,7 +337,7 @@ describe('Client', function () {
       var pwTokenVerification = {href:'abc'};
       var newPassword = 'newPasswordz';
       before(function(done){
-        client.setNewPassword(pwTokenVerification,newPassword,function(){
+        client.setAccountPassword(pwTokenVerification,newPassword,function(){
           done();
         });
       });
