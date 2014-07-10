@@ -1,6 +1,4 @@
-# WORK IN PROGRESS - DO NOT USE
-
-# Stormpath.js
+# Stormpath.js - BETA
 
 A browser-ready javascript library for use with Stormpath features.  Use this library if you are building your own ID Site from scratch.
 Additional features may be added in the future.
@@ -16,10 +14,11 @@ For more information please read [Using Stormpath's ID Site to Host your User Ma
 
 ### Installation
 
-We recommend that you load this library from our CDN, by including this script tag on your page:
+You may clone this repo and use the `stormpath.min.js` or `stormpath.js` files from the `dist/` folder
+by including them in your application with a script tag:
 
 ````html
-<script type="text/javascript" src="http://cdn.stormpath.com/stormpath-js/0.1.0/stormpath.min.js"></script>
+<script type="text/javascript" src="stormpath.min.js"></script>
 ````
 
 This library is also available as a bower package:
@@ -28,7 +27,14 @@ This library is also available as a bower package:
 bower install stormpath.js
 ````
 
-You may also clone this repo and use the `stormpath.min.js` or `stormpath.js` files from the `dist/` folder.
+You may also install this module via NPM and require it in your [Browerified](http://browserify.org) application:
+
+````bash
+npm install stormpath.js
+````
+
+In the near future we will provide this library through our CDN.
+
 
 ### Initialization
 
