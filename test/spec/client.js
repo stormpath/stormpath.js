@@ -113,7 +113,7 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0],{body:input});
+        assert.deepEqual(calledWith[0].body,input);
       });
     });
     describe('if called with username/password',function(){
@@ -130,7 +130,7 @@ describe('Client', function () {
         });
       });
       it('should post base64 encode the data and post it to the api',function(){
-        assert.deepEqual(calledWith[1],{body:{type:'basic',value:data.encoded}});
+        assert.deepEqual(calledWith[1].body,{type:'basic',value:data.encoded});
       });
     });
   });
