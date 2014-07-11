@@ -17,6 +17,7 @@
     "url": "git://github.com/stormpath/stormpath.js.git"
   },
   "license": "Apache-2.0",
+  "keywords": ["stormpath"],
   "devDependencies": {
     "browserify": "^4.2.0",
     "grunt": "^0.4.5",
