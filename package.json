@@ -6,7 +6,16 @@
   "scripts": {
     "test": "grunt test"
   },
-  "author": "",
+  "author": {
+    "name": "Stormpath, Inc.",
+    "email": "support@stormpath.com",
+    "url": "http://www.stormpath.com"
+  },
+  "homepage": "https://github.com/stormpath/stormpath.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stormpath/stormpath.js.git"
+  },
   "license": "Apache-2.0",
   "devDependencies": {
     "browserify": "^4.2.0",
