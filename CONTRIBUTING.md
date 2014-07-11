@@ -23,13 +23,15 @@ npm install
 
 ### Building
 
-You can build the project by running:
+You can build this library by running:
 
 ````bash
 grunt build
 ````
 
-The output of the task is placed in the `dist/` folder
+The output of the task is placed in the `tmp/` folder.  The output is a [Browserified](http://browserify.org)
+CommonJS bundle.  If you are developing a project which will depend on your development version of this
+library you should depend on the output in this tmp directory
 
 ### Testing
 
@@ -43,21 +45,18 @@ The tests will run inside a Chrome instance, using [Karma](http://karma-runner.g
 The tests also create a temporary webserver on port 8085 to run the integration tests against a
 mock API.
 
-### Development environment
+### Automated development environment
 
-
-Then you can run the development environment with this command:
+The automated development environment will automatically run the build and tests as you modify your code.
+You can run the development environment with this command:
 
 ````bash
 grunt dev
 ````
 
-That will start a file watcher which will rebuild and test the code as you modify the files
-in `lib/` or `test/`.
-The rebuilt files will be placed in the `dist/` folder, you should use
-those files in your application if you need to depend on your changes immediately.
-
 If Karma crashes because of a major error you should use `Ctrl+C` to kill the dev environment, then run again.
+If Karma appears to be exiting for no good reason you should stop the dev environment and
+try running the tests manually with `grunt test`
 
 ### Making Pull Requests
 
@@ -74,6 +73,7 @@ can make use of the grunt release task to speed up the release process.  Before 
 * Pulled master to your local machine
 
 The release task will do the following tasks:
+* Build the project and place the ouput in the `dist` folder
 * Bump the verion numbers in these files:
  * package.json
  * bower.json

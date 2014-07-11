@@ -6,5 +6,5 @@ npm-debug.log
 *.iml
 .idea
 .DS_Store
-.tmp
+tmp/
 

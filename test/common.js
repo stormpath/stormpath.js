@@ -1,3 +1,3 @@
 module.exports = {
-  stormpath: require('../.tmp/instrumented/lib')
+  stormpath: require('../lib')
 };

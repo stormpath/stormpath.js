@@ -30,8 +30,8 @@ module.exports = function (grunt) {
             '*/\n'
         },
         files: {
-          'dist/stormpath.js': ['.tmp/stormpath.js'],
-          'dist/stormpath.min.js': ['.tmp/stormpath.min.js']
+          'dist/stormpath.js': ['tmp/stormpath.js'],
+          'dist/stormpath.min.js': ['tmp/stormpath.min.js']
         }
       },
       md:{
@@ -54,9 +54,9 @@ module.exports = function (grunt) {
       },
     },
     browserify: {
-      dist: {
+      tmp: {
         src: ['./lib/index.js'],
-        dest: '.tmp/stormpath.js',
+        dest: 'tmp/stormpath.js',
         options: {
           bundleOptions: {
             standalone: 'Stormpath'
@@ -65,13 +65,13 @@ module.exports = function (grunt) {
       }
     },
     uglify: {
-      dist: {
+      tmp: {
         files: {
-          '.tmp/stormpath.min.js': ['.tmp/stormpath.js']
+          'tmp/stormpath.min.js': ['tmp/stormpath.js']
         }
       }
     },
-    clean: ['./.tmp'],
+    clean: ['./tmp'],
     instrument: {
       files: 'lib/**/*.js',
       options: {
@@ -82,7 +82,7 @@ module.exports = function (grunt) {
     watch: {
       src:{
         files: ['lib/**/*.js'],
-        tasks: ['clean','instrument','build','karma:liveunit:run']
+        tasks: ['build','karma:liveunit:run']
       },
       unitTest:{
         files: ['test/**/*.js'],
@@ -118,11 +118,11 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['browserify']);
 
-  grunt.registerTask('test', ['instrument','connect:fakeapi','karma']);
+  grunt.registerTask('test', ['connect:fakeapi','karma']);
 
-  grunt.registerTask('build', ['browserify:dist','uglify:dist','version']);
+  grunt.registerTask('build', ['clean','browserify:tmp','uglify:tmp']);
 
-  grunt.registerTask('version', ['concat:js','concat:md']);
+  grunt.registerTask('dist', ['build','concat:js','concat:md']);
 
   grunt.registerTask('release', function (target){
     grunt.registerTask('_release', function (){
@@ -130,7 +130,7 @@ module.exports = function (grunt) {
       if(!t){
         grunt.fail.warn('You have aborted the release task.');
       }
-      grunt.task.run(['bump-only:'+(target||'patch'),'build','bump-commit']);
+      grunt.task.run(['bump-only:'+(target||'patch'),'dist','bump-commit']);
     });
     grunt.task.run(['prompt:release','_release']);
   });
