@@ -175,7 +175,7 @@ describe('Client', function () {
       it('should post that data to the api',function(){
         assert.deepEqual(calledWith[0][0],'POST');
         expect(calledWith[0][1]).to.have.string('/accounts');
-        assert.deepEqual(calledWith[0][2],{body:data});
+        assert.deepEqual(calledWith[0][2].body,data);
       });
     });
 
