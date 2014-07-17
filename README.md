@@ -237,6 +237,17 @@ client.setAccountPassword(pwTokenVerification,newPassword,function(err,result){
 });
 ````
 
+# Changelog
+
+### 0.2.0
+
+Support for Single-Sign-On (SSO)
+
+### 0.1.0
+
+First release!  This release includes all the methods that you need to
+build your own ID Site
+
 # Contributing
 
 We regularly maintain our GitHub repostiory, and are quick about reviewing pull requests and accepting changes!
