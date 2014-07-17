@@ -7,6 +7,7 @@ function fakeApiHandler(req,res) {
 
   res.setHeader('Access-Control-Allow-Origin',originUrl);
   res.setHeader('Access-Control-Allow-Headers','Accept, Authorization, Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials','true');
   if(req.method==='OPTIONS'){
     res.statusCode = 204;
     res.end();
