@@ -37,7 +37,7 @@ module.exports = function (grunt) {
       md:{
         options:{
           process: function(src) {
-            return src.replace(/[0-9]\.[0-9]\.[0-9]/g, grunt.config.get('pkg.version'));
+            return src.replace(/\/[0-9]\.[0-9]\.[0-9]\//g, grunt.config.get('pkg.version'));
           },
         },
         files: {
@@ -106,11 +106,37 @@ module.exports = function (grunt) {
           questions:[
             {
               config: 'release.confirmed',
-              message: 'Ready for release? This will version the files and push them to master',
+              message: 'The files have been prepared, would you like to commit them and push to origin/master with a new tag?',
               type: 'confirm',
               default: false
             }
           ]
+        }
+      },
+      semverType: {
+        options:{
+          questions: [{
+            config: 'release.semverType',
+            type: 'list',
+            message: 'What semver type is this release?',
+            choices:[
+              {
+                name: 'Patch (x.x.V)',
+                value: 'patch',
+                checked: true
+              },
+              {
+                name: 'Minor (x.V.x)',
+                value: 'minor',
+                checked: false
+              },
+              {
+                name: 'Major (V.x.x)',
+                value: 'major',
+                checked: false
+              }
+            ]
+          }]
         }
       }
     }
@@ -124,15 +150,18 @@ module.exports = function (grunt) {
 
   grunt.registerTask('dist', ['build','concat:js','concat:md']);
 
-  grunt.registerTask('release', function (target){
-    grunt.registerTask('_release', function (){
-      var t = grunt.config.get('release.confirmed');
-      if(!t){
+  grunt.registerTask('release', function (){
+    grunt.registerTask('_commit', function (){
+      if(!grunt.config.get('release.confirmed')){
         grunt.fail.warn('You have aborted the release task.');
       }
-      grunt.task.run(['bump-only:'+(target||'patch'),'dist','bump-commit']);
+      grunt.task.run(['bump-commit']);
     });
-    grunt.task.run(['prompt:release','_release']);
+    grunt.registerTask('_release', function (){
+      var t = grunt.config.get('release.semverType');
+      grunt.task.run(['bump-only:'+(t),'dist','prompt:release','_commit']);
+    });
+    grunt.task.run(['prompt:semverType','_release']);
   });
 
   grunt.registerTask('dev', ['karma:liveunit','connect:fakeapi','watch']);

@@ -72,7 +72,16 @@ can make use of the grunt release task to speed up the release process.  Before 
 * Merged all relevent changes and pull requests into master
 * Pulled master to your local machine
 
-The release task will do the following tasks:
+You can begin the release task with this grunt command:
+
+````bash
+grunt release
+````
+
+You will be prompted for the type of release (path, minor, major).
+
+After answering, the task will do the following:
+
 * Build the project and place the ouput in the `dist` folder
 * Bump the verion numbers in these files:
  * package.json
@@ -80,22 +89,13 @@ The release task will do the following tasks:
  * dist/stormpath.js
  * dist/stormpath.min.js
  * README.md
-* Commit those files with a version message
-* Tag the repo with the new version
-* Push this new commit and tag to origin/master
 
-Once you are POSITIVE that everything is ready for
-release you may run the release task:
+It will then ask if you would like to commit the files and push them to origin/master with a new tag.
+While at this prompt you may use your git tool of choice to reivew the changes that have been made.
+At this point you may answer yes to have the files committed and pushed, or answer no to end the task.
+If you answer no, it is epexcted that you will manually commit, push and tag the changes.
 
-````bash
-grunt release
-````
-
-Once that task completes you should publish the package to Npm:
-
-````bash
-npm publish
-````
+The task will not automatically publish this proejct to NPM, you must do that manually.
 
 Bower is updated automatically by the tags that were pushed by the release task
 
