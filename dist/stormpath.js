@@ -1,5 +1,5 @@
 /*
- Stormpath.js v0.1.0
+ Stormpath.js v0.2.0
  (c) 2014 Stormpath, Inc. http://stormpath.com
  License: Apache 2.0
 */
@@ -60,7 +60,8 @@ Client.prototype.login = function login(credentials,callback) {
   self.requestExecutor.execute(
     'POST',self.appHref+'/loginAttempts',
     {
-      body: data
+      body: data,
+      withCredentials: true
     },
     callback || utils.noop
   );
@@ -75,7 +76,8 @@ Client.prototype.register = function register(data,callback) {
   self.requestExecutor.execute(
     'POST',self.appHref+'/accounts',
     {
-      body: data
+      body: data,
+      withCredentials: true
     },
     callback || utils.noop
   );
@@ -152,12 +154,15 @@ function Request(method,url,options,callback){
   self.options = options;
   self.xhr = new XMLHttpRequest();
   self.xhr.onreadystatechange = self.onLoad.bind(self);
+  self.xhr.onerror = self.onerror.bind(self);
   self.xhr.open(method,url);
   if(options.withCredentials){
     self.xhr.withCredentials = options.withCredentials;
   }
+  self.xhr.setRequestHeader('Authorization', 'Bearer '+self.options.authToken);
+  self.xhr.setRequestHeader('Content-Type','application/json');
   self.xhr.send(JSON.stringify(options.body));
-  self.opened = false;
+
   self.done = false;
   return self;
 }
@@ -165,13 +170,7 @@ Request.prototype.onLoad = function onLoad() {
   var self = this;
   var XHR = XMLHttpRequest;
   var s = self.xhr.readyState;
-  if(s === XHR.OPENED && !self.opened) {
-    self.xhr.setRequestHeader('Authorization', 'Bearer '+self.options.authToken);
-    self.xhr.setRequestHeader('Content-Type','application/json');
-    self.opened = true;
-  }
   if(s === XHR.DONE && !self.done) {
-
     try{
       var headers = self.responseHeaders = self.getHeadersObject();
       var body = (typeof self.xhr.responseText === 'string' && self.xhr.responseText !== '') ? JSON.parse(self.xhr.responseText) : {};
@@ -187,6 +186,11 @@ Request.prototype.onLoad = function onLoad() {
       self.cb(e);
     }
   }
+};
+Request.prototype.onerror = function onerror() {
+  var self = this;
+  self.done = true;
+  self.cb(new Error('Unknown XHR Error'));
 };
 Request.prototype.getHeadersObject = function getHeadersObject() {
   var self = this;
@@ -216,7 +220,7 @@ RequestExecutor.prototype.execute = function(method,url,options,callback) {
   var cb = typeof options === 'function' ? options : ( callback || utils.noop);
   var req = new Request(method,url,opts,function onDone(err,newToken,request,body){
     self.authToken = newToken;
-    if(!self.authToken){
+    if(!err && !self.authToken){
       self.terminated = true;
     }
     if(err){
