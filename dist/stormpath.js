@@ -1,5 +1,5 @@
 /*
- Stormpath.js v0.2.0
+ Stormpath.js v0.2.1
  (c) 2014 Stormpath, Inc. http://stormpath.com
  License: Apache 2.0
 */
@@ -55,6 +55,10 @@ Client.prototype.login = function login(credentials,callback) {
     };
   }else{
     throw new Error('unsupported credentials object');
+  }
+
+  if(creds.accountStore){
+    data.accountStore = creds.accountStore;
   }
 
   self.requestExecutor.execute(
