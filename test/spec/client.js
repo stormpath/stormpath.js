@@ -133,6 +133,27 @@ describe('Client', function () {
         assert.deepEqual(calledWith[1].body,{type:'basic',value:data.encoded});
       });
     });
+
+    describe('if called with an account store',function(){
+      var result;
+      var data = require('../data/basic-login.json');
+      var input = {
+        login: data.login,
+        password: data.password,
+        accountStore:{
+          href: 'abc'
+        }
+      };
+      before(function(done){
+        client.login(input,function(err){
+          result = [err];
+          done();
+        });
+      });
+      it('should pass the account store to the api',function(){
+        assert.equal(calledWith[2].body.accountStore.href,input.accountStore.href);
+      });
+    });
   });
 
   describe('register()', function () {
