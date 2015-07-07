@@ -101,7 +101,10 @@ and provide a callback:
 client.login(
   {
     login: usernameOrEmail,
-    password: submittedPassword
+    password: submittedPassword,
+    accountStore: { // optional
+      href: 'optional account store href for login attempt'
+    }
   },
   function loginCallback(err,result){
     if(err){
@@ -188,7 +191,13 @@ client.verifyEmailToken(function(err){
 Collect the user's username or email, then call `sendPasswordResetEmail`:
 
 ````javascript
-client.sendPasswordResetEmail(email,function(err){
+var options = {
+  email: 'email or username',
+  accountStore: { // optional
+    href: 'optional account store href for login attempt'
+  }
+}
+client.sendPasswordResetEmail(options,function(err){
   if(err){
     // email is invalid, show err.message to user
   }else{
