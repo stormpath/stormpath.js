@@ -391,17 +391,36 @@ describe('Client', function () {
       });
     });
 
-    describe('if called with correct arugments',function(){
+    describe('if called an email',function(){
       var emailOrUsername = 'reset@met.com';
       before(function(done){
         client.sendPasswordResetEmail(emailOrUsername,function(){
           done();
         });
       });
-      it('should post that data to the api',function(){
+      it('should post that email',function(){
         assert.deepEqual(calledWith[0][0],'POST');
         assert.equal(calledWith[0][1],token.decoded.app_href + '/passwordResetTokens');
         assert.deepEqual(calledWith[0][2],{body:{email:emailOrUsername}});
+      });
+    });
+
+    describe('if called with an object',function(){
+      var data = {
+        email: 'reset@met.com',
+        accountStore: {
+          href: 'anHref' + Math.random()
+        }
+      };
+      before(function(done){
+        client.sendPasswordResetEmail(data,function(){
+          done();
+        });
+      });
+      it('should post that object',function(){
+        assert.deepEqual(calledWith[1][0],'POST');
+        assert.equal(calledWith[1][1],token.decoded.app_href + '/passwordResetTokens');
+        assert.deepEqual(calledWith[1][2],{body:data});
       });
     });
 
