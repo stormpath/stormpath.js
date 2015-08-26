@@ -79,8 +79,9 @@ grunt release
 ````
 
 You will be prompted for the type of release (path, minor, major).
+Please select the appropriate option and press enter.
 
-After answering, the task will do the following:
+The task will then do the following for you:
 
 * Build the project and place the ouput in the `dist` folder
 * Bump the verion numbers in these files:
@@ -90,13 +91,18 @@ After answering, the task will do the following:
  * dist/stormpath.min.js
  * README.md
 
+
 It will then ask if you would like to commit the files and push them to origin/master with a new tag.
-While at this prompt you may use your git tool of choice to reivew the changes that have been made.
-At this point you may answer yes to have the files committed and pushed, or answer no to end the task.
+Before answering "yes", you should use your git tool of choice to review the changes to make sure
+that everything looks sane.
+
+When you answer "yes", these changes will be committed and pushed to origin.
+Bower is updated automatically by the presence of the new tag in the origin.
+NPM will not be updated automatically, you must do that manually:
+
+````bash
+npm publish
+````
+
 If you answer no, it is epexcted that you will manually commit, push and tag the changes.
 
-The task will not automatically publish this proejct to NPM, you must do that manually.
-
-Bower is updated automatically by the tags that were pushed by the release task
-
-Finally, you should push the new version to the Stormpath CDN
