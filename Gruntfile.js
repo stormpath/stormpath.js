@@ -6,6 +6,7 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    year: new Date().getFullYear(),
     bump: {
       options:{
         files: ['package.json','bower.json'],
@@ -25,7 +26,7 @@ module.exports = function (grunt) {
         options: {
           banner: '/*\n' +
             ' Stormpath.js v<%= pkg.version %>\n' +
-            ' (c) 2014 Stormpath, Inc. http://stormpath.com\n'+
+            ' (c) 2014-<%= year %> Stormpath, Inc. http://stormpath.com\n'+
             ' License: Apache 2.0\n' +
             '*/\n'
         },
