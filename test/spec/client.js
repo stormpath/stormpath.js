@@ -134,6 +134,24 @@ describe('Client', function () {
       });
     });
 
+    describe('if called with unicode characters', function(){
+      var result;
+      var data = require('../data/unicode-password.json');
+      var input = {
+        login: data.login,
+        password: data.password
+      };
+      before(function(done){
+        client.login(input,function(err){
+          result = [err];
+          done();
+        });
+      });
+      it('should post the correct base64 encoded string to the API',function(){
+        assert.deepEqual(calledWith[2].body,{type:'basic',value:data.encoded});
+      });
+    });
+
     describe('if called with an account store',function(){
       var result;
       var data = require('../data/basic-login.json');
@@ -151,7 +169,7 @@ describe('Client', function () {
         });
       });
       it('should pass the account store to the api',function(){
-        assert.equal(calledWith[2].body.accountStore.href,input.accountStore.href);
+        assert.equal(calledWith[3].body.accountStore.href,input.accountStore.href);
       });
     });
   });
