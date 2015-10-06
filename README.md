@@ -248,6 +248,14 @@ client.setAccountPassword(pwTokenVerification,newPassword,function(err,result){
 
 # Changelog
 
+### 0.3.1
+
+Fixing the base64 encoding strategy, unicode characters are now supported.
+
+### 0.3.0
+
+Adding support for Organizations
+
 ### 0.2.0
 
 Support for Single-Sign-On (SSO)

@@ -1,9 +1,11 @@
 /*
- Stormpath.js v0.2.2
+ Stormpath.js v0.3.1
  (c) 2014 Stormpath, Inc. http://stormpath.com
  License: Apache 2.0
 */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Stormpath=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+'use strict';
+
 var RequestExecutor = _dereq_('./request-executor');
 var utils = _dereq_('./utils');
 var base64 = utils.base64;
@@ -27,14 +29,38 @@ function Client(options,readyCallback){
     setTimeout(function(){cb(e);},1);
     return;
   }
+
+  if(self.jwtPayload.onk){
+    self.setCachedOrganizationNameKey(self.jwtPayload.onk);
+  }
+
+  var idSiteModelHref = self.appHref;
   self.requestExecutor = opts.requestExecutor || new RequestExecutor(self.jwt);
   self.requestExecutor.execute(
-    'GET',self.appHref + '?expand=idSiteModel',
+    'GET',idSiteModelHref + '?expand=idSiteModel',
     function(err,application){
       cb(err, err? null:application.idSiteModel);
     }
   );
 }
+
+Client.prototype.organizationNameKeyCookieKey = 'sp.onk';
+Client.prototype.organizationNameKeyCookieExpiration = 'expires=Fri, 31 Dec 9999 23:59:59 GMT';
+
+Client.prototype.getCachedOrganizationNameKey = function() {
+  return decodeURIComponent(
+    document.cookie.replace(
+      new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(this.organizationNameKeyCookieKey)
+        .replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$'),
+      '$1'
+    )
+  ) || null;
+};
+
+Client.prototype.setCachedOrganizationNameKey = function(nameKey) {
+  document.cookie = encodeURIComponent(this.organizationNameKeyCookieKey) +
+    '=' + encodeURIComponent(nameKey) + '; ' + this.organizationNameKeyCookieExpiration;
+};
 
 Client.prototype._getToken = function() {
   return decodeURIComponent( (window.location.href.match(/jwt=(.+)/) || [])[1] || '' );
@@ -155,6 +181,8 @@ module.exports = {
   Client: _dereq_('./client')
 };
 },{"./client":1}],3:[function(_dereq_,module,exports){
+'use strict';
+
 var utils = _dereq_('./utils');
 
 function Request(method,url,options,callback){
@@ -228,14 +256,17 @@ RequestExecutor.prototype.execute = function(method,url,options,callback) {
 
   var cb = typeof options === 'function' ? options : ( callback || utils.noop);
   var req = new Request(method,url,opts,function onDone(err,newToken,request,body){
+    var redirectUrl = request && request.responseHeaders && request.responseHeaders['Stormpath-SSO-Redirect-Location'];
     self.authToken = newToken;
     if(!err && !self.authToken){
       self.terminated = true;
     }
     if(err){
+      if(redirectUrl){
+        err.redirectUrl = redirectUrl;
+      }
       return cb(err);
     }
-    var redirectUrl = request.responseHeaders['Stormpath-SSO-Redirect-Location'];
     if(redirectUrl){
       body.redirectUrl = redirectUrl;
     }
@@ -246,73 +277,31 @@ RequestExecutor.prototype.execute = function(method,url,options,callback) {
 
 module.exports = RequestExecutor;
 },{"./utils":4}],4:[function(_dereq_,module,exports){
+'use strict';
+
+/**
+ * @function
+ * From: https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#Solution_.232_.E2.80.93_rewriting_atob()_and_btoa()_using_TypedArrays_and_UTF-8
+ */
+
+function b64EncodeUnicode(str) {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+    return String.fromCharCode('0x' + p1);
+  }));
+}
+
 module.exports = {
-  base64: _dereq_('base64'),
+  base64: {
+    atob: function atob(str){
+      return decodeURIComponent(window.atob(str));
+    },
+    btoa: function btoa(str){
+      var v = b64EncodeUnicode(str);
+      return v;
+    }
+  },
   noop: function(){}
 };
-},{"base64":5}],5:[function(_dereq_,module,exports){
-;(function () {
-
-  var object = typeof exports != 'undefined' ? exports : this; // #8: web workers
-  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-  function InvalidCharacterError(message) {
-    this.message = message;
-  }
-  InvalidCharacterError.prototype = new Error;
-  InvalidCharacterError.prototype.name = 'InvalidCharacterError';
-
-  // encoder
-  // [https://gist.github.com/999166] by [https://github.com/nignag]
-  object.btoa || (
-  object.btoa = function (input) {
-    var str = String(input);
-    for (
-      // initialize result and counter
-      var block, charCode, idx = 0, map = chars, output = '';
-      // if the next str index does not exist:
-      //   change the mapping table to "="
-      //   check if d has no fractional digits
-      str.charAt(idx | 0) || (map = '=', idx % 1);
-      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-      output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-    ) {
-      charCode = str.charCodeAt(idx += 3/4);
-      if (charCode > 0xFF) {
-        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
-      }
-      block = block << 8 | charCode;
-    }
-    return output;
-  });
-
-  // decoder
-  // [https://gist.github.com/1020396] by [https://github.com/atk]
-  object.atob || (
-  object.atob = function (input) {
-    var str = String(input).replace(/=+$/, '');
-    if (str.length % 4 == 1) {
-      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-    }
-    for (
-      // initialize result and counters
-      var bc = 0, bs, buffer, idx = 0, output = '';
-      // get next character
-      buffer = str.charAt(idx++);
-      // character found in table? initialize bit storage and add its ascii value;
-      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-        // and if not first of each 4 characters,
-        // convert the first 8 bits to one ascii character
-        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-    ) {
-      // try to find character in table (0-63, not found => -1)
-      buffer = chars.indexOf(buffer);
-    }
-    return output;
-  });
-
-}());
-
 },{}]},{},[2])
 (2)
 });
