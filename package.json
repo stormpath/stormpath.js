@@ -17,7 +17,9 @@
     "url": "git://github.com/stormpath/stormpath.js.git"
   },
   "license": "Apache-2.0",
-  "keywords": ["stormpath"],
+  "keywords": [
+    "stormpath"
+  ],
   "devDependencies": {
     "browserify": "^4.2.0",
     "grunt": "^0.4.5",
@@ -27,7 +29,7 @@
     "grunt-karma": "^0.8.3",
     "grunt-contrib-watch": "^0.6.1",
     "load-grunt-tasks": "^0.6.0",
-    "mocha": "^1.20.1",
+    "mocha": "^2.3.3",
     "karma-mocha": "^0.1.4",
     "karma-chrome-launcher": "^0.1.4",
     "karma-browserify": "^0.2.1",
@@ -41,7 +43,5 @@
     "grunt-bump": "0.0.14",
     "grunt-prompt": "^1.1.0"
   },
-  "dependencies": {
-
-  }
+  "dependencies": {}
 }
