@@ -1,6 +1,7 @@
 'use strict';
 
 var stormpathJs = require('../common').stormpath;
+var strings = require('../../lib/strings');
 
 describe('Client', function () {
 
@@ -15,7 +16,7 @@ describe('Client', function () {
         });
       });
       it('should err',function(){
-        assert.instanceOf(result[0],Error);
+        assert.equal(result[0].message,strings.errors.JWT_NOT_FOUND);
       });
     });
 
@@ -28,7 +29,7 @@ describe('Client', function () {
         });
       });
       it('should err',function(){
-        assert.instanceOf(result[0],Error);
+        assert.equal(result[0].message,strings.errors.NOT_A_JWT);
       });
     });
 
