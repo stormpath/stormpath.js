@@ -24,7 +24,7 @@ describe('Client', function () {
   describe('login() with a bad login', function () {
     var result;
     before(function(done){
-      client.login({login:'bad',password:'bad'},function(err,value){
+      new stormpathJs.Client({token:validToken.encoded}).login({login:'bad',password:'bad'},function(err,value){
         result = [err,value];
         done();
       });
@@ -37,7 +37,7 @@ describe('Client', function () {
   describe('login() with a good login', function () {
     var result;
     before(function(done){
-      client.login({login:'good',password:'good'},function(err,value){
+      new stormpathJs.Client({token:validToken.encoded}).login({login:'good',password:'good'},function(err,value){
         result = [err,value];
         done();
       });

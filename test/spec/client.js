@@ -20,7 +20,7 @@ describe('Client', function () {
       });
     });
 
-    describe('with an invalid JWT', function () {
+    describe('with a invalid JWT', function () {
       var result;
       before(function(done){
         new stormpathJs.Client({token:'this is not a valid token'},function(err,res){
@@ -33,7 +33,7 @@ describe('Client', function () {
       });
     });
 
-    describe('with an valid JWT', function () {
+    describe('with a valid JWT', function () {
       var requestedAppHref, result;
       var token = require('../data/valid-jwt.json');
       var client;
@@ -43,8 +43,8 @@ describe('Client', function () {
           {
             token:token.encoded,
             requestExecutor: {
-              execute: function(m,u,cb){
-                requestedAppHref = u;
+              execute: function(xhrRequestOptions,cb){
+                requestedAppHref = xhrRequestOptions.url;
                 cb(null,{idSiteModel:'abcd1234'});
                 done();
               }
@@ -66,7 +66,7 @@ describe('Client', function () {
 
   });
 
-  describe('login()', function () {
+  describe.only('login()', function () {
     var calledWith = [];
     var token = require('../data/valid-jwt.json');
     var client;
@@ -75,13 +75,13 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,o,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
                 // the calls to login attempts
-                calledWith.push(o);
+                calledWith.push(xhrRequestOptions);
                 cb();
               }
             }
@@ -114,7 +114,7 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0].body,input);
+        assert.deepEqual(calledWith[0].json,input);
       });
     });
     describe('if called with username/password',function(){
@@ -131,7 +131,7 @@ describe('Client', function () {
         });
       });
       it('should post base64 encode the data and post it to the api',function(){
-        assert.deepEqual(calledWith[1].body,{type:'basic',value:data.encoded});
+        assert.deepEqual(calledWith[1].json,{type:'basic',value:data.encoded});
       });
     });
 
@@ -149,7 +149,7 @@ describe('Client', function () {
         });
       });
       it('should post the correct base64 encoded string to the API',function(){
-        assert.deepEqual(calledWith[2].body,{type:'basic',value:data.encoded});
+        assert.deepEqual(calledWith[2].json,{type:'basic',value:data.encoded});
       });
     });
 
@@ -170,7 +170,7 @@ describe('Client', function () {
         });
       });
       it('should pass the account store to the api',function(){
-        assert.equal(calledWith[3].body.accountStore.href,input.accountStore.href);
+        assert.equal(calledWith[3].json.accountStore.href,input.accountStore.href);
       });
     });
   });
@@ -184,8 +184,8 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,o,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
@@ -232,7 +232,7 @@ describe('Client', function () {
           token:token.encoded,
           requestExecutor: {
             execute: function(m,u,cb){
-              if(u.match(/idSiteModel/)){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
@@ -278,7 +278,7 @@ describe('Client', function () {
           token:token.encoded,
           requestExecutor: {
             execute: function(m,u,cb){
-              if(u.match(/idSiteModel/)){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
@@ -324,8 +324,8 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,o,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
@@ -389,8 +389,8 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,o,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
