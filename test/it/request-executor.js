@@ -1,6 +1,6 @@
 'use strict';
 
-var stormpathJs = require('../common').stormpath;
+var stormpathJs = require('../../lib');
 
 describe('Request Executor', function () {
   var validToken = require('../data/valid-jwt.json');
@@ -55,7 +55,7 @@ describe('Request Executor', function () {
 
     });
     it('should not have a new token',function(){
-      assert.equal(client.requestExecutor.authToken,'');
+      assert.equal(client.requestExecutor.authToken,null);
     });
   });
 

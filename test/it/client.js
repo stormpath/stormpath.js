@@ -16,7 +16,7 @@ describe('Client', function () {
         }
       );
     });
-    it('should call the callback an idSiteModel',function(){
+    it('should call the callback with an idSiteModel',function(){
       assert.equal(result[1].href,validToken.decoded.app_href+'/idSiteModel');
     });
   });
