@@ -43,9 +43,9 @@ module.exports = function(config) {
     browsers: ['Chrome'],
 
     browserify: {
-      watch: true
+      watch: true,
+      debug: true
     },
-
 
     preprocessors: {
       'test/it/*.js': ['browserify'],
