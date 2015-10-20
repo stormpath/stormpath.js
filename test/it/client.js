@@ -43,7 +43,7 @@ describe('Client', function () {
       });
     });
     it('should give a redirect url',function(){
-      assert.equal(result[1].redirectUrl,'the-place-to-go');
+      assert.equal(result[1].serviceProviderCallbackUrl,'the-place-to-go');
     });
   });
 
@@ -74,7 +74,7 @@ describe('Client', function () {
 
       });
       it('should give a redirect url',function(){
-        assert.equal(result[1].redirectUrl,'the-place-to-go');
+        assert.equal(result[1].serviceProviderCallbackUrl,'the-place-to-go');
       });
     });
   });
