@@ -1,21 +1,23 @@
-# Stormpath.js - BETA
+# Stormpath.js
 
-A browser-ready javascript library for use with Stormpath features.  Use this library if you are building your own ID Site from scratch.
-Additional features may be added in the future.
+A browser-ready javascript library for use with Stormpath features.  Use this
+library if you are building your own ID Site from scratch. Additional features
+may be added in the future.
 
 
 ### Usage
 
-In order to use Stormpath.js, your application must be part of a Service-Provider initiated flow.
-The client assumes this is true and searches the browser's URL for the secure token
-which is needed to initialize the client.
+In order to use Stormpath.js, your application must be part of a Service-
+Provider initiated flow. The client assumes this is true and searches the
+browser's URL for the secure token which is needed to initialize the client.
 
 For more information please read [Using Stormpath's ID Site to Host your User Management UI](http://docs.stormpath.com/guides/using-id-site)
 
 ### Installation
 
-You may clone this repo and use the `stormpath.min.js` or `stormpath.js` files from the `dist/` folder
-by including them in your application with a script tag:
+You may clone this repo and use the `stormpath.min.js` or `stormpath.js` files
+from the `dist/` folder by including them in your application with a script
+tag:
 
 ````html
 <script type="text/javascript" src="stormpath.min.js"></script>
@@ -27,18 +29,16 @@ This library is also available as a bower package:
 bower install stormpath.js
 ````
 
-You may also install this module via NPM and require it in your [Browerified](http://browserify.org) application:
+You may also install this module via NPM and require it in your [Browserify](http://browserify.org) application:
 
 ````bash
 npm install stormpath.js
 ````
 
-In the near future we will provide this library through our CDN.
-
-
 ### Initialization
 
-To initialize a Stormpath Client which will be used for all API communication, simply create a new instance and pass a callback function:
+To initialize a Stormpath Client which will be used for all API communication,
+simply create a new instance and pass a callback function:
 
 ````javascript
 $(document).ready(function(){
@@ -57,9 +57,14 @@ $(document).ready(function(){
 
 The site model has all the information that you need to build your ID Site, it tells you:
 
-* `passwordPolicy`, an object, which provides the password strength policies for the account store which new accounts will be created in.
-If null, new accounts are not permitted for the target account store or the store is a social provider store.
-* `providers`, which provides your social provider configuration as an array of objects, ordered by account store prioritization.
+* `passwordPolicy`, an object, which provides the password strength policies for
+  the account store which new accounts will be created in. If null, new accounts
+  are not permitted for the target account store or the store is a social
+  provider store.
+
+* `providers`, which provides your social provider configuration as an array of
+  objects, ordered by account store prioritization.
+
 * `logoUrl`, the URL to the logo image
 
 All of these options can be configured in your Stormpath Admin Console.
@@ -110,14 +115,14 @@ client.login(
     if(err){
       // credentials are invalid, show err.message to the user
     }else{
-      // login was successful, send the user to the redirectUrl
-      window.location.replace(result.redirectUrl);
+      // login was successful, send the user to the serviceProviderCallbackUrl
+      window.location.replace(result.serviceProviderCallbackUrl);
     }
   }
 );
 ````
 
-### Login/register a user (Google or Facebook)
+### Social Login (Google or Facebook)
 
 Use the Facebook or Google Javascript Library to prompt the user for login, then pass
 the token they provide to the `login` method using the `providerData` object:
@@ -134,8 +139,8 @@ client.login(
     if(err){
       // an error with the provider, show err.message to the user
     }else{
-      // login was successful, send the user to the redirectUrl
-      window.location.replace(result.redirectUrl);
+      // login was successful, send the user to the serviceProviderCallbackUrl
+      window.location.replace(result.serviceProviderCallbackUrl);
     }
   }
 );
@@ -155,11 +160,11 @@ client.register(
     password: 'hackerztheplanet'
   },
   function registerCallback(err,result){
-    if(result.redirectUrl){
-      // You will be given the redirectUrl if the email verification workflow is
+    if(result.serviceProviderCallbackUrl){
+      // You will be given the serviceProviderCallbackUrl if the email verification workflow is
       // NOT enabled for this account store, in which case the user can now
-      // continue to the redirectUrl
-      window.location.replace(result.redirectUrl);
+      // continue to the serviceProviderCallbackUrl
+      window.location.replace(result.serviceProviderCallbackUrl);
     }else{
       // tell the user to check their email for a verification link
       alert('Please check your email for a verification link.');
@@ -247,6 +252,12 @@ client.setAccountPassword(pwTokenVerification,newPassword,function(err,result){
 ````
 
 # Changelog
+
+### 0.4.0
+
+* Refactoring the internal request executor to supply contextual error messages
+* Fixing https://github.com/stormpath/idsite-src/issues/2 by not sending cookies
+  on requests to the API
 
 ### 0.3.1
 
