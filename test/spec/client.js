@@ -58,15 +58,12 @@ describe('Client', function () {
       it('should request the app href that was specified by the token',function(){
         expect(requestedAppHref).to.have.string(token.decoded.app_href);
       });
-      it('should call the callback with the idSiteModel value',function(){
-        assert.equal(result[1],'abcd1234');
-      });
 
     });
 
   });
 
-  describe.only('login()', function () {
+  describe('login()', function () {
     var calledWith = [];
     var token = require('../data/valid-jwt.json');
     var client;
@@ -190,7 +187,7 @@ describe('Client', function () {
                 done();
               }else{
                 // the calls to register
-                calledWith.push([m,u,o]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -213,9 +210,10 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0][0],'POST');
-        expect(calledWith[0][1]).to.have.string('/accounts');
-        assert.deepEqual(calledWith[0][2].body,data);
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        expect(xhrInvocation.url).to.have.string('/accounts');
+        assert.deepEqual(xhrInvocation.json,data);
       });
     });
 
@@ -231,13 +229,13 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,cb){
+            execute: function(xhrRequestOptions,cb){
               if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
                 // the calls to verifyEmailToken
-                calledWith.push([m,u]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -259,9 +257,10 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0][0],'POST');
-        expect(calledWith[0][1]).to.have.string('/v1/accounts/emailVerificationTokens/' + token.decoded.sp_token);
-        assert.equal(calledWith[0][2],null);
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        expect(xhrInvocation.url).to.have.string('/v1/accounts/emailVerificationTokens/' + token.decoded.sp_token);
+        assert.equal(xhrInvocation.json,null);
       });
     });
 
@@ -277,13 +276,13 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,cb){
+            execute: function(xhrRequestOptions,cb){
               if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
                 // the calls to verifyPasswordResetToken
-                calledWith.push([m,u]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -305,9 +304,10 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0][0],'GET');
-        expect(calledWith[0][1]).to.have.string('passwordResetTokens/' + token.decoded.sp_token);
-        assert.equal(calledWith[0][2],null);
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'GET');
+        expect(xhrInvocation.url).to.have.string('passwordResetTokens/' + token.decoded.sp_token);
+        assert.equal(xhrInvocation.json,true);
       });
     });
 
@@ -330,7 +330,7 @@ describe('Client', function () {
                 done();
               }else{
                 // the calls to setAccountPassword
-                calledWith.push([m,u,o]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -370,9 +370,10 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0][0],'POST');
-        assert.equal(calledWith[0][1],pwTokenVerification.href);
-        assert.deepEqual(calledWith[0][2],{body:{password:newPassword}});
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        assert.equal(xhrInvocation.url,pwTokenVerification.href);
+        assert.deepEqual(xhrInvocation.json,{password:newPassword});
       });
     });
 
@@ -395,7 +396,7 @@ describe('Client', function () {
                 done();
               }else{
                 // the calls to sendPasswordResetEmail
-                calledWith.push([m,u,o]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -410,7 +411,7 @@ describe('Client', function () {
       });
     });
 
-    describe('if called an email',function(){
+    describe('if called with an email',function(){
       var emailOrUsername = 'reset@met.com';
       before(function(done){
         client.sendPasswordResetEmail(emailOrUsername,function(){
@@ -418,9 +419,10 @@ describe('Client', function () {
         });
       });
       it('should post that email',function(){
-        assert.deepEqual(calledWith[0][0],'POST');
-        assert.equal(calledWith[0][1],token.decoded.app_href + '/passwordResetTokens');
-        assert.deepEqual(calledWith[0][2],{body:{email:emailOrUsername}});
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        assert.equal(xhrInvocation.url,token.decoded.app_href + '/passwordResetTokens');
+        assert.deepEqual(xhrInvocation.json,{ email:emailOrUsername });
       });
     });
 
@@ -437,9 +439,10 @@ describe('Client', function () {
         });
       });
       it('should post that object',function(){
-        assert.deepEqual(calledWith[1][0],'POST');
-        assert.equal(calledWith[1][1],token.decoded.app_href + '/passwordResetTokens');
-        assert.deepEqual(calledWith[1][2],{body:data});
+        var xhrInvocation = calledWith[1][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        assert.equal(xhrInvocation.url,token.decoded.app_href + '/passwordResetTokens');
+        assert.deepEqual(xhrInvocation.json,data);
       });
     });
 
