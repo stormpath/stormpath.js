@@ -1,6 +1,7 @@
 'use strict';
 
 var stormpathJs = require('../common').stormpath;
+var strings = require('../../lib/strings');
 
 describe('Client', function () {
 
@@ -15,11 +16,11 @@ describe('Client', function () {
         });
       });
       it('should err',function(){
-        assert.instanceOf(result[0],Error);
+        assert.equal(result[0].message,strings.errors.JWT_NOT_FOUND);
       });
     });
 
-    describe('with an invalid JWT', function () {
+    describe('with a invalid JWT', function () {
       var result;
       before(function(done){
         new stormpathJs.Client({token:'this is not a valid token'},function(err,res){
@@ -28,11 +29,11 @@ describe('Client', function () {
         });
       });
       it('should err',function(){
-        assert.instanceOf(result[0],Error);
+        assert.equal(result[0].message,strings.errors.NOT_A_JWT);
       });
     });
 
-    describe('with an valid JWT', function () {
+    describe('with a valid JWT', function () {
       var requestedAppHref, result;
       var token = require('../data/valid-jwt.json');
       var client;
@@ -42,8 +43,8 @@ describe('Client', function () {
           {
             token:token.encoded,
             requestExecutor: {
-              execute: function(m,u,cb){
-                requestedAppHref = u;
+              execute: function(xhrRequestOptions,cb){
+                requestedAppHref = xhrRequestOptions.url;
                 cb(null,{idSiteModel:'abcd1234'});
                 done();
               }
@@ -56,9 +57,6 @@ describe('Client', function () {
       });
       it('should request the app href that was specified by the token',function(){
         expect(requestedAppHref).to.have.string(token.decoded.app_href);
-      });
-      it('should call the callback with the idSiteModel value',function(){
-        assert.equal(result[1],'abcd1234');
       });
 
     });
@@ -74,13 +72,13 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,o,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
                 // the calls to login attempts
-                calledWith.push(o);
+                calledWith.push(xhrRequestOptions);
                 cb();
               }
             }
@@ -113,7 +111,7 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0].body,input);
+        assert.deepEqual(calledWith[0].json,input);
       });
     });
     describe('if called with username/password',function(){
@@ -130,7 +128,7 @@ describe('Client', function () {
         });
       });
       it('should post base64 encode the data and post it to the api',function(){
-        assert.deepEqual(calledWith[1].body,{type:'basic',value:data.encoded});
+        assert.deepEqual(calledWith[1].json,{type:'basic',value:data.encoded});
       });
     });
 
@@ -148,7 +146,7 @@ describe('Client', function () {
         });
       });
       it('should post the correct base64 encoded string to the API',function(){
-        assert.deepEqual(calledWith[2].body,{type:'basic',value:data.encoded});
+        assert.deepEqual(calledWith[2].json,{type:'basic',value:data.encoded});
       });
     });
 
@@ -169,7 +167,7 @@ describe('Client', function () {
         });
       });
       it('should pass the account store to the api',function(){
-        assert.equal(calledWith[3].body.accountStore.href,input.accountStore.href);
+        assert.equal(calledWith[3].json.accountStore.href,input.accountStore.href);
       });
     });
   });
@@ -183,13 +181,13 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,o,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
                 // the calls to register
-                calledWith.push([m,u,o]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -212,9 +210,10 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0][0],'POST');
-        expect(calledWith[0][1]).to.have.string('/accounts');
-        assert.deepEqual(calledWith[0][2].body,data);
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        expect(xhrInvocation.url).to.have.string('/accounts');
+        assert.deepEqual(xhrInvocation.json,data);
       });
     });
 
@@ -230,13 +229,13 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
                 // the calls to verifyEmailToken
-                calledWith.push([m,u]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -258,9 +257,10 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0][0],'POST');
-        expect(calledWith[0][1]).to.have.string('/v1/accounts/emailVerificationTokens/' + token.decoded.sp_token);
-        assert.equal(calledWith[0][2],null);
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        expect(xhrInvocation.url).to.have.string('/v1/accounts/emailVerificationTokens/' + token.decoded.sp_token);
+        assert.equal(xhrInvocation.json,null);
       });
     });
 
@@ -276,13 +276,13 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
                 // the calls to verifyPasswordResetToken
-                calledWith.push([m,u]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -304,9 +304,10 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0][0],'GET');
-        expect(calledWith[0][1]).to.have.string('passwordResetTokens/' + token.decoded.sp_token);
-        assert.equal(calledWith[0][2],null);
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'GET');
+        expect(xhrInvocation.url).to.have.string('passwordResetTokens/' + token.decoded.sp_token);
+        assert.equal(xhrInvocation.json,true);
       });
     });
 
@@ -323,13 +324,13 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,o,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
                 // the calls to setAccountPassword
-                calledWith.push([m,u,o]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -369,9 +370,10 @@ describe('Client', function () {
         });
       });
       it('should post that data to the api',function(){
-        assert.deepEqual(calledWith[0][0],'POST');
-        assert.equal(calledWith[0][1],pwTokenVerification.href);
-        assert.deepEqual(calledWith[0][2],{body:{password:newPassword}});
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        assert.equal(xhrInvocation.url,pwTokenVerification.href);
+        assert.deepEqual(xhrInvocation.json,{password:newPassword});
       });
     });
 
@@ -388,13 +390,13 @@ describe('Client', function () {
         {
           token:token.encoded,
           requestExecutor: {
-            execute: function(m,u,o,cb){
-              if(u.match(/idSiteModel/)){
+            execute: function(xhrRequestOptions,cb){
+              if(xhrRequestOptions.url.match(/idSiteModel/)){
                 // the first call for the site model
                 done();
               }else{
                 // the calls to sendPasswordResetEmail
-                calledWith.push([m,u,o]);
+                calledWith.push([xhrRequestOptions]);
                 cb();
               }
             }
@@ -409,7 +411,7 @@ describe('Client', function () {
       });
     });
 
-    describe('if called an email',function(){
+    describe('if called with an email',function(){
       var emailOrUsername = 'reset@met.com';
       before(function(done){
         client.sendPasswordResetEmail(emailOrUsername,function(){
@@ -417,9 +419,10 @@ describe('Client', function () {
         });
       });
       it('should post that email',function(){
-        assert.deepEqual(calledWith[0][0],'POST');
-        assert.equal(calledWith[0][1],token.decoded.app_href + '/passwordResetTokens');
-        assert.deepEqual(calledWith[0][2],{body:{email:emailOrUsername}});
+        var xhrInvocation = calledWith[0][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        assert.equal(xhrInvocation.url,token.decoded.app_href + '/passwordResetTokens');
+        assert.deepEqual(xhrInvocation.json,{ email:emailOrUsername });
       });
     });
 
@@ -436,9 +439,10 @@ describe('Client', function () {
         });
       });
       it('should post that object',function(){
-        assert.deepEqual(calledWith[1][0],'POST');
-        assert.equal(calledWith[1][1],token.decoded.app_href + '/passwordResetTokens');
-        assert.deepEqual(calledWith[1][2],{body:data});
+        var xhrInvocation = calledWith[1][0];
+        assert.deepEqual(xhrInvocation.method,'POST');
+        assert.equal(xhrInvocation.url,token.decoded.app_href + '/passwordResetTokens');
+        assert.deepEqual(xhrInvocation.json,data);
       });
     });
 

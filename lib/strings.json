@@ -1,0 +1,10 @@
+{
+  "errors": {
+    "JWT_NOT_FOUND": "JWT not found as url query parameter.",
+    "NOT_A_JWT": "JWT does not appear to be a property formatted JWT.",
+    "MALFORMED_JWT_CLAIMS": "The JWT claims section is malfomed and could not be decoded as JSON.",
+    "NO_AUTH_TOKEN_HEADER": "HTTP response does not contain Authorization header.",
+    "INVALID_AUTH_TOKEN_HEADER": "HTTP response has an invalid Authorization header.",
+    "INITIAL_JWT_REJECTED": "The JWT used to initialized the client was rejected."
+  }
+}

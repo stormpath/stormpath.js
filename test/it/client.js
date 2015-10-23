@@ -16,7 +16,7 @@ describe('Client', function () {
         }
       );
     });
-    it('should call the callback an idSiteModel',function(){
+    it('should call the callback with an idSiteModel',function(){
       assert.equal(result[1].href,validToken.decoded.app_href+'/idSiteModel');
     });
   });
@@ -24,7 +24,7 @@ describe('Client', function () {
   describe('login() with a bad login', function () {
     var result;
     before(function(done){
-      client.login({login:'bad',password:'bad'},function(err,value){
+      new stormpathJs.Client({token:validToken.encoded}).login({login:'bad',password:'bad'},function(err,value){
         result = [err,value];
         done();
       });
@@ -37,13 +37,13 @@ describe('Client', function () {
   describe('login() with a good login', function () {
     var result;
     before(function(done){
-      client.login({login:'good',password:'good'},function(err,value){
+      new stormpathJs.Client({token:validToken.encoded}).login({login:'good',password:'good'},function(err,value){
         result = [err,value];
         done();
       });
     });
     it('should give a redirect url',function(){
-      assert.equal(result[1].redirectUrl,'the-place-to-go');
+      assert.equal(result[1].serviceProviderCallbackUrl,'the-place-to-go');
     });
   });
 
@@ -74,7 +74,7 @@ describe('Client', function () {
 
       });
       it('should give a redirect url',function(){
-        assert.equal(result[1].redirectUrl,'the-place-to-go');
+        assert.equal(result[1].serviceProviderCallbackUrl,'the-place-to-go');
       });
     });
   });

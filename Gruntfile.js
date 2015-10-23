@@ -51,15 +51,15 @@ module.exports = function (grunt) {
         options: {
           middleware: require('./test/fakeapi'),
           port: 8085
-        },
-      },
+        }
+      }
     },
     browserify: {
       tmp: {
         src: ['./lib/index.js'],
         dest: 'tmp/stormpath.js',
         options: {
-          bundleOptions: {
+          browserifyOptions: {
             standalone: 'Stormpath'
           }
         }
