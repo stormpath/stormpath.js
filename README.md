@@ -253,7 +253,13 @@ client.setAccountPassword(pwTokenVerification,newPassword,function(err,result){
 
 # Changelog
 
+### 0.4.1
+
+**Not Yet Released**
+
 ### 0.4.0
+
+**Released on October 23rd, 2015**
 
 * Refactoring the internal request executor to supply contextual error messages
 * Fixing https://github.com/stormpath/idsite-src/issues/2 by not sending cookies
