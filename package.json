@@ -1,6 +1,6 @@
 {
   "name": "stormpath-js",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A browser-ready javascript library for Stormpath.  Use this library if you are building your own ID Site from scratch. Additional features may be added in the future.",
   "main": "lib/index.js",
   "scripts": {
