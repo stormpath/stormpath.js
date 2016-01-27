@@ -63,8 +63,6 @@ try running the tests manually with `grunt test`
 Please ensure that the tests are passing before making a pull request, and please
 add tests if you add new functionality.
 
-Please make all pull requests into the `development` branch, not `master`.
-
 ### Making releases
 
 If you are a maintainer of this repository you
