@@ -1,5 +1,5 @@
 /*
- Stormpath.js v0.5.1
+ Stormpath.js v0.5.2
  (c) 2014-2016 Stormpath, Inc. http://stormpath.com
  License: Apache 2.0
 */
@@ -388,9 +388,9 @@ function IdSiteRequestExecutor (authToken) {
 IdSiteRequestExecutor.prototype.handleResponse = function handleResponse (err,response,body,requestorCallback) {
 
   var executor = this;
-  var newToken = response.headers.authorization;
+  var newToken = response.headers.authorization || response.rawRequest.getResponseHeader && response.rawRequest.getResponseHeader('Authorization');
   var parsedToken = null;
-  var serviceProviderCallbackUrl = response.headers['stormpath-sso-redirect-location'];
+  var serviceProviderCallbackUrl = response.headers['stormpath-sso-redirect-location'] || response.rawRequest.getResponseHeader && response.rawRequest.getResponseHeader('stormpath-sso-redirect-location');
 
   if (newToken) {
     parsedToken = newToken.split('Bearer');
@@ -511,14 +511,27 @@ module.exports = {
 "use strict";
 var window = require("global/window")
 var once = require("once")
+var isFunction = require("is-function")
 var parseHeaders = require("parse-headers")
-
-
+var xtend = require("xtend")
 
 module.exports = createXHR
 createXHR.XMLHttpRequest = window.XMLHttpRequest || noop
 createXHR.XDomainRequest = "withCredentials" in (new createXHR.XMLHttpRequest()) ? createXHR.XMLHttpRequest : window.XDomainRequest
 
+forEachArray(["get", "put", "post", "patch", "head", "delete"], function(method) {
+    createXHR[method === "delete" ? "del" : method] = function(uri, options, callback) {
+        options = initParams(uri, options, callback)
+        options.method = method.toUpperCase()
+        return _createXHR(options)
+    }
+})
+
+function forEachArray(array, iterator) {
+    for (var i = 0; i < array.length; i++) {
+        iterator(array[i])
+    }
+}
 
 function isEmpty(obj){
     for(var i in obj){
@@ -527,7 +540,34 @@ function isEmpty(obj){
     return true
 }
 
-function createXHR(options, callback) {
+function initParams(uri, options, callback) {
+    var params = uri
+
+    if (isFunction(options)) {
+        callback = options
+        if (typeof uri === "string") {
+            params = {uri:uri}
+        }
+    } else {
+        params = xtend(options, {uri: uri})
+    }
+
+    params.callback = callback
+    return params
+}
+
+function createXHR(uri, options, callback) {
+    options = initParams(uri, options, callback)
+    return _createXHR(options)
+}
+
+function _createXHR(options) {
+    var callback = options.callback
+    if(typeof callback === "undefined"){
+        throw new Error("callback argument missing")
+    }
+    callback = once(callback)
+
     function readystatechange() {
         if (xhr.readyState === 4) {
             loadFunc()
@@ -604,16 +644,6 @@ function createXHR(options, callback) {
 
     }
 
-    if (typeof options === "string") {
-        options = { uri: options }
-    }
-
-    options = options || {}
-    if(typeof callback === "undefined"){
-        throw new Error("callback argument missing")
-    }
-    callback = once(callback)
-
     var xhr = options.xhr || null
 
     if (!xhr) {
@@ -628,7 +658,7 @@ function createXHR(options, callback) {
     var aborted
     var uri = xhr.url = options.uri || options.url
     var method = xhr.method = options.method || "GET"
-    var body = options.body || options.data
+    var body = options.body || options.data || null
     var headers = xhr.headers = options.headers || {}
     var sync = !!options.sync
     var isJson = false
@@ -698,7 +728,7 @@ function createXHR(options, callback) {
 
 function noop() {}
 
-},{"global/window":8,"once":9,"parse-headers":13}],8:[function(require,module,exports){
+},{"global/window":8,"is-function":9,"once":10,"parse-headers":13,"xtend":14}],8:[function(require,module,exports){
 (function (global){
 if (typeof window !== "undefined") {
     module.exports = window;
@@ -712,6 +742,23 @@ if (typeof window !== "undefined") {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],9:[function(require,module,exports){
+module.exports = isFunction
+
+var toString = Object.prototype.toString
+
+function isFunction (fn) {
+  var string = toString.call(fn)
+  return string === '[object Function]' ||
+    (typeof fn === 'function' && string !== '[object RegExp]') ||
+    (typeof window !== 'undefined' &&
+     // IE8 and below
+     (fn === window.setTimeout ||
+      fn === window.alert ||
+      fn === window.confirm ||
+      fn === window.prompt))
+};
+
+},{}],10:[function(require,module,exports){
 module.exports = once
 
 once.proto = once(function () {
@@ -732,7 +779,7 @@ function once (fn) {
   }
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var isFunction = require('is-function')
 
 module.exports = forEach
@@ -780,24 +827,7 @@ function forEachObject(object, iterator, context) {
     }
 }
 
-},{"is-function":11}],11:[function(require,module,exports){
-module.exports = isFunction
-
-var toString = Object.prototype.toString
-
-function isFunction (fn) {
-  var string = toString.call(fn)
-  return string === '[object Function]' ||
-    (typeof fn === 'function' && string !== '[object RegExp]') ||
-    (typeof window !== 'undefined' &&
-     // IE8 and below
-     (fn === window.setTimeout ||
-      fn === window.alert ||
-      fn === window.confirm ||
-      fn === window.prompt))
-};
-
-},{}],12:[function(require,module,exports){
+},{"is-function":9}],12:[function(require,module,exports){
 
 exports = module.exports = trim;
 
@@ -845,5 +875,26 @@ module.exports = function (headers) {
 
   return result
 }
-},{"for-each":10,"trim":12}]},{},[4])(4)
+},{"for-each":11,"trim":12}],14:[function(require,module,exports){
+module.exports = extend
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+function extend() {
+    var target = {}
+
+    for (var i = 0; i < arguments.length; i++) {
+        var source = arguments[i]
+
+        for (var key in source) {
+            if (hasOwnProperty.call(source, key)) {
+                target[key] = source[key]
+            }
+        }
+    }
+
+    return target
+}
+
+},{}]},{},[4])(4)
 });
