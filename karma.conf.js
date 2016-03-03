@@ -40,7 +40,13 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: ['Chrome'],
+    browsers: [
+      // 'Chrome'
+      // 'sl_firefox_20'
+      'sl_firefox_latest',
+      // 'sl_safari_8'
+      // 'Safari'
+    ],
 
     browserify: {
       watch: true,
@@ -52,11 +58,69 @@ module.exports = function(config) {
       'test/spec/*.js': ['browserify']
     },
 
-    reporters: ['progress','coverage'],
+    reporters: ['progress','coverage','saucelabs'],
 
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: false
+    singleRun: false,
+
+    customLaunchers: {
+      sl_firefox_20: {
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        version: '20'
+      },
+      sl_firefox_latest: {
+        base: 'SauceLabs',
+        browserName: 'firefox'
+      },
+      sl_chrome_latest: {
+        base: 'SauceLabs',
+        browserName: 'chrome'
+      },
+      sl_ie_11: {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 8.1',
+        version: '11'
+      },
+      sl_ie_10: {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 7',
+        version: '10'
+      },
+      sl_ios_safari: {
+        base: 'SauceLabs',
+        browserName: 'iphone',
+        platform: 'OS X 10.9',
+        version: '7.1'
+      },
+      sl_safari_9: {
+        base: 'SauceLabs',
+        browserName: 'safari',
+        platform: 'OS X 10.11',
+        version: '9.0'
+      },
+      sl_safari_8: {
+        base: 'SauceLabs',
+        browserName: 'safari',
+        platform: 'OS X 10.10',
+        version: '8.0'
+      }
+    },
+
+    sauceLabs: {
+      testName: 'Stormpath.js Tests',
+      startConnect: false,
+      connectOptions: {
+        username: 'xxx',
+        accessKey: 'xxx',
+        tunnelIdentifier: 'xxx'
+      }
+    }
+
+
   });
 };
