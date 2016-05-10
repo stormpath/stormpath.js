@@ -62,6 +62,8 @@ function Client (options,readyCallback) {
     idSiteParentResource = self.jwtPayload.ash;
   }
 
+  self.idSiteParentResource = idSiteParentResource;
+
   self.requestExecutor = opts.requestExecutor || new IdSiteRequestExecutor(self.jwt);
   self.requestExecutor.execute(
     {
@@ -208,7 +210,7 @@ Client.prototype.register = function register (data,callback) {
   client.requestExecutor.execute(
     {
       method: 'POST',
-      url: client.appHref+'/accounts',
+      url: client.idSiteParentResource+'/accounts',
       json: data
     },
     callback || utils.noop
