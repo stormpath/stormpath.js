@@ -82,6 +82,10 @@ function Client (options,readyCallback) {
         return cb(new Error(strings.errors.NO_AUTH_TOKEN_HEADER));
       }
 
+      if (!opts.token) {
+        self.saveSessionToken();
+      }
+
       cb(null,application.idSiteModel);
     }
   );
@@ -142,6 +146,13 @@ Client.prototype.getJwtFromUrl = function () {
     return '';
   }
 };
+
+Client.prototype.saveSessionToken = function() {
+  // With our new access token, remove the previous access token from
+  // the hash and save the new one to the cookie
+  window.location.hash = window.location.hash.replace(/jwt=([^&]+)/, '');
+  document.cookie = 'idSiteJwt=' + this.requestExecutor.authToken;
+}
 
 /**
  * Attempts to fetch the password reset token from the JWT
@@ -294,7 +305,12 @@ Client.prototype.verifyPasswordResetToken = function verifyPasswordResetToken (c
       url: client.appHref + '/passwordResetTokens/' + client.sptoken,
       json: true
     },
-    callback
+    function(err, body) {
+      client.saveSessionToken();
+      if (callback) {
+        callback(err, body);
+      }
+    }
   );
 };
 
@@ -438,11 +454,6 @@ IdSiteRequestExecutor.prototype.handleResponse = function handleResponse (err,re
     }
 
     executor.authToken = parsedToken[1].trim();
-    
-    // With our new access token, remove the previous access token from
-    // the hash and save the new one to the cookie
-    window.location.hash = window.location.hash.replace(/jwt=([^&]+)/, '');
-    document.cookie = 'idSiteJwt=' + executor.authToken;
   } else {
     executor.authToken = null;
   }
