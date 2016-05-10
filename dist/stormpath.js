@@ -83,6 +83,9 @@ function Client (options,readyCallback) {
       }
 
       if (!opts.token) {
+        // With our new access token, remove the previous access token from
+        // the hash and save the new one to the cookie
+        window.location.hash = window.location.hash.replace(/jwt=([^&]+)/, '')
         document.cookie = 'idSiteJwt=' + self.requestExecutor.authToken
       }
 
@@ -130,6 +133,7 @@ Client.prototype.setCachedOrganizationNameKey = function (nameKey) {
 
 /**
  * Attempts to fetch the JWT from the ?jwt=X location in the window URL.
+ * If not present, fetches from cookies. 
  * Returns an empty string if not found
  * @return {string} JWT
  */
@@ -137,7 +141,6 @@ Client.prototype.getJwtFromUrl = function () {
   var jwtMatch = window.location.href.match(/jwt=([^&]+)/)
   var jwtCookie = utils.getCookie('idSiteJwt')
   if(jwtMatch) {
-    window.location.hash = window.location.hash.replace(/jwt=([^&]+)/, '')
     return decodeURIComponent(jwtMatch[1])
   } else if (jwtCookie) {
     document.cookie = 'idSiteJwt=' + ''
