@@ -83,7 +83,7 @@ function Client (options,readyCallback) {
       }
 
       if (!opts.token) {
-        self.replaceJWTInUrl(self.requestExecutor.authToken);
+        document.cookie = 'idSiteJwt=' + self.requestExecutor.authToken
       }
 
       cb(null,application.idSiteModel);
@@ -134,15 +134,17 @@ Client.prototype.setCachedOrganizationNameKey = function (nameKey) {
  * @return {string} JWT
  */
 Client.prototype.getJwtFromUrl = function () {
-  return decodeURIComponent( (window.location.href.match(/jwt=([^&]+)/) || [])[1] || '' );
-};
-
-/**
- * Attempts to replace the JWT in the url with the new JWT passed in the function.
- * @param {string} newJwt
- */
-Client.prototype.replaceJWTInUrl = function (newJwt) {
-  window.location.hash = window.location.hash.replace(/jwt=([^&]+)/, 'jwt=' + newJwt);
+  var jwtMatch = window.location.href.match(/jwt=([^&]+)/)
+  var jwtCookie = utils.getCookie('idSiteJwt')
+  if(jwtMatch) {
+    window.location.hash = window.location.hash.replace(/jwt=([^&]+)/, '')
+    return decodeURIComponent(jwtMatch[1])
+  } else if (jwtCookie) {
+    document.cookie = 'idSiteJwt=' + ''
+    return jwtCookie
+  } else {
+    return ''
+  }
 };
 
 /**
@@ -503,6 +505,13 @@ function b64EncodeUnicode(str) {
   }));
 }
 
+function getCookie(name) {
+  var cookie = document.cookie.match(new RegExp(name + '=([^;]+)'));
+  if (cookie) {
+    return cookie[1];
+  }
+}
+
 module.exports = {
   base64: {
     atob: function atob(str){
@@ -513,7 +522,8 @@ module.exports = {
       return v;
     }
   },
-  noop: function(){}
+  noop: function(){}, 
+  getCookie: getCookie
 };
 },{}],7:[function(require,module,exports){
 var isFunction = require('is-function')
