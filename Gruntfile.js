@@ -13,7 +13,7 @@ module.exports = function (grunt) {
         updateConfigs: ['pkg'],
         commit: true,
         commitMessage: 'Release v%VERSION%',
-        commitFiles: ['package.json','bower.json','dist/stormpath.js','dist/stormpath.min.js','README.md'],
+        commitFiles: ['package.json','bower.json','dist/stormpath.js','dist/stormpath.min.js','README.md','CHANGELOG.md'],
         createTag: true,
         tagName: '%VERSION%',
         tagMessage: 'Version %VERSION%',
