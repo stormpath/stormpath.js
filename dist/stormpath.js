@@ -1,5 +1,5 @@
 /*
- Stormpath.js v0.5.2
+ Stormpath.js v0.6.0
  (c) 2014-2016 Stormpath, Inc. http://stormpath.com
  License: Apache 2.0
 */
@@ -49,7 +49,7 @@ function Client (options,readyCallback) {
   }
 
   self.appHref = self.jwtPayload.app_href;
-  self.sptoken = self.jwtPayload.sp_token || null;
+  self.sptoken = self.getPasswordResetToken();
   self.baseurl = self.appHref.match('^.+//([^\/]+)\/')[0];
 
   var idSiteParentResource = self.appHref;
@@ -86,6 +86,11 @@ function Client (options,readyCallback) {
       if (!self.requestExecutor.authToken) {
         return cb(new Error(strings.errors.NO_AUTH_TOKEN_HEADER));
       }
+
+      if (!opts.token) {
+        self.saveSessionToken();
+      }
+
       cb(null,application.idSiteModel);
     }
   );
@@ -130,12 +135,61 @@ Client.prototype.setCachedOrganizationNameKey = function (nameKey) {
 
 /**
  * Attempts to fetch the JWT from the ?jwt=X location in the window URL.
+ * If not present, fetches from cookies.
  * Returns an empty string if not found
  * @return {string} JWT
  */
 Client.prototype.getJwtFromUrl = function () {
-  return decodeURIComponent( (window.location.href.match(/jwt=([^&]+)/) || [])[1] || '' );
+  var jwtMatch = window.location.href.match(/jwt=([^&]+)/);
+  var jwtCookie = utils.getCookie('idSiteJwt');
+  if (jwtMatch) {
+    return decodeURIComponent(jwtMatch[1])
+  } else if (jwtCookie) {
+    document.cookie = 'idSiteJwt=' + '';
+    return jwtCookie;
+  } else {
+    return '';
+  }
 };
+
+Client.prototype.saveSessionToken = function() {
+  // With our new access token, remove the previous access token from
+  // the hash and save the new one to the cookie
+  window.location.replace( (window.location+'').replace(/\?jwt=([^&]+)/, '') );
+  document.cookie = 'idSiteJwt=' + this.requestExecutor.authToken;
+}
+
+/**
+ * Attempts to fetch the password reset token from the JWT
+ * Returns an null if not found
+ * @return {string} Password Reset Token
+ */
+Client.prototype.getPasswordResetToken = function() {
+  var self = this;
+  if (self.jwtPayload.sp_token) {
+    return self.jwtPayload.sp_token;
+  } else {
+    // We need to get the token from jwt.scope.application.SLUG.passwordResetToken.SLUG
+    // See https://gist.github.com/edjiang/a570a4d9e60d08492def97938b35cdfa for an example token
+    var applicationId = self.appHref.replace('https://api.stormpath.com/v1/applications/', '');
+    var application = self.jwtPayload.scope.application[applicationId];
+
+    // Get all things in the application object, reduce to just the password reset token object
+    var passwordResetTokens = application.map(function(contents) {
+      return contents.passwordResetToken;
+    }).reduce(function(previous, current) {
+      return previous || current;
+    }).map(function(contents) {
+      // Get all password reset token objects, reduce to just the slug
+      return typeof contents == 'object' ? contents : null;
+    }).reduce(function(previous, current) {
+      return previous || current;
+    });
+
+    // Return the password reset token or null
+    return passwordResetTokens ? Object.keys(passwordResetTokens)[0] : null;
+  }
+}
 
 /**
  * Make a login attempt against the REST API, given the credentials and
@@ -256,7 +310,12 @@ Client.prototype.verifyPasswordResetToken = function verifyPasswordResetToken (c
       url: client.appHref + '/passwordResetTokens/' + client.sptoken,
       json: true
     },
-    callback
+    function(err, body) {
+      client.saveSessionToken();
+      if (callback) {
+        callback(err, body);
+      }
+    }
   );
 };
 
@@ -473,12 +532,12 @@ module.exports = {
 },{"./client":1}],5:[function(require,module,exports){
 module.exports={
   "errors": {
-    "JWT_NOT_FOUND": "JWT not found as url query parameter.",
+    "JWT_NOT_FOUND": "Login session not initialized.",
     "NOT_A_JWT": "JWT does not appear to be a property formatted JWT.",
     "MALFORMED_JWT_CLAIMS": "The JWT claims section is malfomed and could not be decoded as JSON.",
     "NO_AUTH_TOKEN_HEADER": "HTTP response does not contain Authorization header.",
     "INVALID_AUTH_TOKEN_HEADER": "HTTP response has an invalid Authorization header.",
-    "INITIAL_JWT_REJECTED": "The JWT used to initialized the client was rejected."
+    "INITIAL_JWT_REJECTED": "Your login session is expired."
   }
 }
 },{}],6:[function(require,module,exports){
@@ -495,6 +554,13 @@ function b64EncodeUnicode(str) {
   }));
 }
 
+function getCookie(name) {
+  var cookie = document.cookie.match(new RegExp(name + '=([^;]+)'));
+  if (cookie) {
+    return cookie[1];
+  }
+}
+
 module.exports = {
   base64: {
     atob: function atob(str){
@@ -505,7 +571,8 @@ module.exports = {
       return v;
     }
   },
-  noop: function(){}
+  noop: function(){}, 
+  getCookie: getCookie
 };
 },{}],7:[function(require,module,exports){
 "use strict";
