@@ -1,3 +1,14 @@
+## 0.6.0
+
+The Id Site Request Executor will now pull the initial JWT from the URL and
+store it in a cookie.  Subsequent JWTs, obtained during API interaction, will be
+stored in the cookie.  This allows the end-user to reload the page without
+breaking the authenticated session.
+
+If using this library with Angular, you should use Angular >= 1.2.29, as
+previous versions may have a digest error when stormpath.js removes the JWT from
+the window location.
+
 ## 0.5.2
 
 The request executor now uses `xmlHttpRequest.getResponseHeader()` as a fallback
