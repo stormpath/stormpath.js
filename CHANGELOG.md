@@ -1,3 +1,10 @@
+## 0.6.2
+
+* Fixed a problem in the client constructor that would cause an exception in
+`getJwtFromUrl()`.  The error occurred because we were expecting all application
+URLs to be on api.stormpath.com.  This was preventing Enterprise and Private
+Deployment tenants from using the 0.6.x series.
+
 ## 0.6.1
 
 * Reverted the changes from 0.5.2, that used `getResponseHeader()` instead of

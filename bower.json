@@ -1,7 +1,7 @@
 {
   "name": "stormpath.js",
   "description": "A browser-ready javascript library for Stormpath",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "license": "Apache 2.0",
   "main": "dist/stormpath.js",
   "keywords": ["stormpath"],
