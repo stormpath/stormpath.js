@@ -1,3 +1,19 @@
+## 0.6.1
+
+* Reverted the changes from 0.5.2, that used `getResponseHeader()` instead of
+`getAllResponseHeaders()`.  This caused "Refused to get unsafe header" errors to
+be logged.  These errors did not break application behavior, but did introduce
+a source of confusion.  This revert means that Firefox < 22 will not be
+compatible with this library.
+
+* This library now uses the [Buffer module](https://github.com/feross/buffer)
+for Base64-URL decoding, and should be more robust with JWTs that contain
+Unicode characters and string-encoded JSON values.
+
+* Fixed a bug with the password reset flow that was introduced by 0.6.0.  When
+arriving on the #/reset?jwt=<jwt> URL, you would be directed to #/ and not shown
+the reset password form.
+
 ## 0.6.0
 
 The Id Site Request Executor will now pull the initial JWT from the URL and
