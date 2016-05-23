@@ -41,7 +41,7 @@
     "karma-coverage": "^0.5.3",
     "karma-mocha": "^0.2.1",
     "load-grunt-tasks": "^3.4.0",
-    "mocha": "^2.3.4"
+    "mocha": "^2.5.1"
   },
   "dependencies": {
     "buffer": "^4.6.0",
