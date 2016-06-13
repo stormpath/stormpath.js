@@ -1,3 +1,15 @@
+## 0.7.0
+
+* Registration attempts now post to the Organization, if an Organization is
+specified when the user is redirected to ID Site.  Previously they were posted
+to the Application's endpoint.
+
+ **Known Bug**: In this version, the end user cannot recover from the duplicate
+ account error.  This is an issue with the Stormpath REST API and a fix will be
+ released soon.
+
+* This version also properly surfaces 403 errors from the Stormpath REST API.
+
 ## 0.6.2
 
 * Fixed a problem in the client constructor that would cause an exception in

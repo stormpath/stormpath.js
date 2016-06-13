@@ -1,5 +1,5 @@
 /*
- Stormpath.js v0.6.2
+ Stormpath.js v0.7.0
  (c) 2014-2016 Stormpath, Inc. http://stormpath.com
  License: Apache 2.0
 */
@@ -52,21 +52,21 @@ function Client (options,readyCallback) {
   self.sptoken = self.getPasswordResetToken();
   self.baseurl = self.appHref.match('^.+//([^\/]+)\/')[0];
 
-  var idSiteParentResource = self.appHref;
+  self.idSiteParentResource = self.appHref;
 
   if (self.jwtPayload.onk) {
     self.setCachedOrganizationNameKey(self.jwtPayload.onk);
   }
 
   if (self.jwtPayload.asnk) {
-    idSiteParentResource = self.jwtPayload.ash;
+    self.idSiteParentResource = self.jwtPayload.ash;
   }
 
   self.requestExecutor = opts.requestExecutor || new IdSiteRequestExecutor(self.jwt);
   self.requestExecutor.execute(
     {
       method: 'GET',
-      url: idSiteParentResource + '?expand=idSiteModel',
+      url: self.idSiteParentResource + '?expand=idSiteModel',
       json: true
     },
     function (err,application) {
@@ -263,7 +263,7 @@ Client.prototype.register = function register (data,callback) {
   client.requestExecutor.execute(
     {
       method: 'POST',
-      url: client.appHref+'/accounts',
+      url: client.idSiteParentResource+'/accounts',
       json: data
     },
     callback || utils.noop
@@ -476,6 +476,12 @@ IdSiteRequestExecutor.prototype.handleResponse = function handleResponse (err,re
   if (response.statusCode>399) {
     if (serviceProviderCallbackUrl) {
       body.serviceProviderCallbackUrl = serviceProviderCallbackUrl;
+    }
+    if (response.statusCode === 403 && !body) {
+      body = {
+        status: 403,
+        message: 'Forbidden'
+      };
     }
     return requestorCallback(body);
   }
