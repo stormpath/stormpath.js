@@ -5,6 +5,7 @@
     "MALFORMED_JWT_CLAIMS": "The JWT claims section is malfomed and could not be decoded as JSON.",
     "NO_AUTH_TOKEN_HEADER": "HTTP response does not contain Authorization header.",
     "INVALID_AUTH_TOKEN_HEADER": "HTTP response has an invalid Authorization header.",
-    "INITIAL_JWT_REJECTED": "Your login session is expired."
+    "INITIAL_JWT_REJECTED": "Your login session is expired.",
+    "SESSION_EXPIRED": "Your login session is expired."
   }
 }
