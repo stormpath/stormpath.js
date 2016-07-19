@@ -1,3 +1,8 @@
+## 0.7.1
+
+The internal request executor will now return the SESSION_EXPIRED error on next
+tick, to integrate well with Angular's digest process.
+
 ## 0.7.0
 
 * Registration attempts now post to the Organization, if an Organization is

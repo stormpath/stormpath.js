@@ -1,5 +1,5 @@
 /*
- Stormpath.js v0.7.0
+ Stormpath.js v0.7.1
  (c) 2014-2016 Stormpath, Inc. http://stormpath.com
  License: Apache 2.0
 */
@@ -72,7 +72,7 @@ function Client (options,readyCallback) {
     function (err,application) {
       if (err) {
         if (err.status === 401) {
-          return cb(new Error(strings.errors.INITIAL_JWT_REJECTED));
+          return cb(new Error(strings.errors.SESSION_EXPIRED));
         }
         return cb(err);
       }
@@ -520,7 +520,7 @@ IdSiteRequestExecutor.prototype.execute = function (xhrRequestOptions,callback) 
   }
 
   if (!executor.authToken) {
-    return callback(new Error(strings.errors.NO_AUTH_TOKEN));
+    return setTimeout(callback.bind(null,new Error(strings.errors.SESSION_EXPIRED)),1);
   }
 
   xhrRequestOptions.headers.Authorization = 'Bearer ' + executor.authToken;
@@ -544,7 +544,8 @@ module.exports={
     "MALFORMED_JWT_CLAIMS": "The JWT claims section is malfomed and could not be decoded as JSON.",
     "NO_AUTH_TOKEN_HEADER": "HTTP response does not contain Authorization header.",
     "INVALID_AUTH_TOKEN_HEADER": "HTTP response has an invalid Authorization header.",
-    "INITIAL_JWT_REJECTED": "Your login session is expired."
+    "INITIAL_JWT_REJECTED": "Your login session is expired.",
+    "SESSION_EXPIRED": "Your login session is expired."
   }
 }
 },{}],6:[function(require,module,exports){
