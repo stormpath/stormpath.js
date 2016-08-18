@@ -44,7 +44,7 @@
     "mocha": "^2.3.4"
   },
   "dependencies": {
-    "buffer": "^4.6.0",
+    "buffer": "^4.9.1",
     "xhr": "^2.2.0"
   }
 }
