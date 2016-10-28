@@ -32,7 +32,7 @@ bower install stormpath.js
 You may also install this module via NPM and require it in your [Browserify](http://browserify.org) application:
 
 ````bash
-npm install stormpath.js
+npm install stormpath-js
 ````
 
 ### Initialization
